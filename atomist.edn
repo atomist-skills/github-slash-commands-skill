@@ -3,7 +3,7 @@
   :package {:use "atomist/package-cljs-skill"},
   :license "unknown",
   :name "atomist/git-chatops-skill",
-  :icon "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
+  :icon "https://cdn3.iconfinder.com/data/icons/chat-bot-emoji-blue-filled-color/300/14134081Untitled-3-512.png",
   :title "git chatops skill",
   :author "slimslenderslacks",
   :runtime

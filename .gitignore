@@ -2,4 +2,5 @@
 .shadow-cljs
 index.js
 node_modules
-
+.idea
+*.iml

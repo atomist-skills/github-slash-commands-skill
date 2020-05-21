@@ -1,0 +1,19 @@
+{
+    Comment {
+        body
+        commentId
+        issue {
+            number
+        }
+        pullRequest {
+            number
+        }
+        by {
+            name
+            person {
+                forename
+                surname
+            }
+        }
+    }
+}
