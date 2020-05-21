@@ -1,4 +1,4 @@
-{
+subscription OnComment {
     Comment {
         body
         commentId
