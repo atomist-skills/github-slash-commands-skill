@@ -18,18 +18,19 @@
 (defn atomist-command [s]
   (re-find #"(?m)atomist (\w+)(.*)?" s))
 
-(defn commit [request {[{:keys [message] {:keys [owner name]} :repo [{:keys [branch]}] :pushes}] :Commit}]
+(defn push [request {[{:keys [branch] {:keys [owner name]} :repo {:keys [message author sha]} :after}] :Push}]
   (go
     (let [[_ command args] (atomist-command message)]
       (if command
         (<! (-> request
                 (api/channel "git-chatops-skill")
-                (api/simple-message (no-null-format "run %s %s for branch %s on %s/%s"
+                (api/simple-message (no-null-format "run %s %s for branch %s on %s/%s from %s"
                                                     command
                                                     args
                                                     branch
                                                     owner
-                                                    name))))
+                                                    name
+                                                    (:login author)))))
         (<! (-> request
                 (api/channel "git-chatops-skill")
                 (api/simple-message (gstring/format "No command in ```%s```" (or message "missing message"))))))
@@ -48,7 +49,7 @@
       (let [data (-> request :data)]
         (<! (handler
              (cond
-               (contains? data :Commit) (<! (commit request data))
+               (contains? data :Push) (<! (push request data))
                (contains? data :Comment) (<! (comment-made request data))
                :else request)))))))
 
@@ -60,6 +61,7 @@
    (-> (api/finished)
        (custom-middleware)
        (api/extract-github-token)
+       (api/add-slack-source-to-event)
        (api/log-event)
        (api/status :send-status (fn [request] (if-let [data-keys (-> request :data keys)]
                                                 (gstring/format "processed %s" data-keys)
