@@ -1,0 +1,3 @@
+skill:
+  package:
+    user: atomist/package-cljs-skill
