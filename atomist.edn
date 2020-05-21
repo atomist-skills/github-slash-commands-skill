@@ -1,1 +1,14 @@
-{:skill {:package {:use "atomist/package-cljs-skill"}}}
+{:skill
+ {:description "This section supports markdown",
+  :package {:use "atomist/package-cljs-skill"},
+  :license "unknown",
+  :name "atomist/git-chatops-skill",
+  :icon "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
+  :title "git chatops skill",
+  :author "slimslenderslacks",
+  :runtime
+  {:memory 512,
+   :timeout 60,
+   :entry_point "eventhandler",
+   :name "nodejs10"},
+  :homepageUrl "https://github.com/atomist-skills/git-chatops-skill"}}
