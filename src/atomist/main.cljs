@@ -24,7 +24,7 @@
       (if command
         (<! (-> request
                 (api/channel "git-chatops-skill")
-                (api/simple-message (no-null-format "run %s %s for branch %s on %s/%s from %s"
+                (api/simple-message (no-null-format "```run %s %s \n    for branch %s on %s/%s from %s```"
                                                     command
                                                     args
                                                     branch
