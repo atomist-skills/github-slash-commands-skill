@@ -1,1 +1,1 @@
-{:package {:user "atomist/package-cljs-skill"}}
+{:package {:use "atomist/package-cljs-skill"}}
