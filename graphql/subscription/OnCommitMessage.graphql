@@ -1,5 +1,12 @@
 subscription OnCommitMessage {
     Commit {
         message
+        repo {
+            owner
+            name
+        }
+        pushes {
+            branch
+        }
     }
 }
