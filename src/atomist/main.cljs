@@ -57,16 +57,16 @@
     (go
       (<! (slack-message request))
       (<! (handler (assoc request
-                     :command (merge
-                               {:command/command command
-                                :command/args args
-                                :command/token token
-                                :command/repo repo
-                                :command/message message}
-                               (if (= "label" command)
-                                 {:label/number number})
-                               (if (= "pr" command)
-                                 {:pr/branch branch}))))))))
+                          :command (merge
+                                    {:command/command command
+                                     :command/args args
+                                     :command/token token
+                                     :command/repo repo
+                                     :command/message message}
+                                    (if (= "label" command)
+                                      {:label/number number})
+                                    (if (= "pr" command)
+                                      {:pr/branch branch}))))))))
 
 (defn atomist-command [keyword s]
   (re-find (re-pattern (gstring/format "(?m)%s (\w+)(.*)?" keyword)) s))
