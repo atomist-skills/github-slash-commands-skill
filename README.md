@@ -30,10 +30,12 @@ You can enable this skill without configuring any target versions.  In this mode
 data about your library versions, but will take no action.  Simply select the set of
 repositories that should be scanned.
 
-1. **Configure the keyword to recognize commands**
+1. **Configure the keyword used to recognize commands**
 
-    Instead of the keyword `atomist`, use a different name to recognize the beginning of an instruction.
+    ![Repository filter](docs/images/screenshot1.png)
 
+    Switch the default keyword from `atomist` to something customized for your team.
+ 
 2. **Determine repository scope**
 
     ![Repository filter](docs/images/repo-filter.png)
@@ -52,7 +54,7 @@ repositories that should be scanned.
     Commit message.  You can include this anywhere in the message:
     
     ```
-    atomist pr --title 'any title surrounded by quotes' --base target-branch-ref
+    <keyword> pr --title 'any title surrounded by quotes' --base target-branch-ref
     ```
     
 2.  **Add a Comment to an open PR**
@@ -61,7 +63,7 @@ repositories that should be scanned.
     Request. 
 
     ```
-    atomist pr --base master --comment
+    <keyword> pr --base master --comment
     ```
     
     The rest of the commit message will be transcribed into the PR comment body.
@@ -71,13 +73,13 @@ repositories that should be scanned.
     When commenting on an issue, you can add labels to that issue by commenting directly in the Issue:
     
     ```
-    atomist label label-name
+    <keyword> label label-name
     ```
     
     You can also remove labels from an Issue:
     
     ```
-    atomist label rm label-name
+    <keyword> label rm label-name
     ```
 
 To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/git-chatops-skill/issues). See the [code](https://github.com/atomist-skills/git-chatops-skill) for the skill.

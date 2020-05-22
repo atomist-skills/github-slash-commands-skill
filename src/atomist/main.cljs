@@ -23,7 +23,7 @@
     (let [[_ command args] (atomist-command message)]
       (if command
         (<! (-> request
-                (api/channel "git-chatops-skill")
+                (api/channel "git-chatops-skill")gs
                 (api/simple-message (no-null-format "```run %s %s \n    for branch %s on %s/%s from %s```"
                                                     command
                                                     args
