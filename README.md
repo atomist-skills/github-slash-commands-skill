@@ -11,10 +11,20 @@ When you know that you want to trigger a command after Push, embed the command i
 For example, if you'd like to create a Pull Request after a successful Push, include a command in your Commit Message:
 
 ```
-git commit -m "my fix message and then ... plus  atomist pr --title 'pr title' --base master" 
+17:56 $ git commit -m "$(cat <<-END
+> this is my commit message
+> but I can also add a command
+>
+> atomist pr --title 'my title' --base master
+> END
+> )"
 ```
 
-When configuring this skill, you can define the syntax that we'll use to parse these messages.
+When configuring this skill, you can change the keyword used to trigger a command to something else.
+
+```
+<keyword> pr --title 'my title' --base master
+```
 
 # Before you get started
 
