@@ -18,7 +18,7 @@
 (defn atomist-command [s]
   (re-find #"(?m)atomist (\w+)(.*)?" s))
 
-(defn push [request {[{:keys [branch] {:keys [owner name]} :repo {:keys [message author sha]} :after}] :Push}]
+(defn push-mode [request {[{:keys [branch] {:keys [owner name]} :repo {:keys [message author sha]} :after}] :Push}]
   (go
     (let [[_ command args] (atomist-command message)]
       (if command
@@ -36,7 +36,7 @@
                 (api/simple-message (gstring/format "No command in ```%s```" (or message "missing message"))))))
       request)))
 
-(defn comment-made [request {[{:keys [body]}] :Comment}]
+(defn comment-mode [request {[{:keys [body]}] :Comment}]
   (go
     (let [[_ command args] (atomist-command body)]
       (if command
@@ -49,8 +49,8 @@
       (let [data (-> request :data)]
         (<! (handler
              (cond
-               (contains? data :Push) (<! (push request data))
-               (contains? data :Comment) (<! (comment-made request data))
+               (contains? data :Push) (<! (push-mode request data))
+               (contains? data :Comment) (<! (comment-mode request data))
                :else request)))))))
 
 (defn ^:export handler
