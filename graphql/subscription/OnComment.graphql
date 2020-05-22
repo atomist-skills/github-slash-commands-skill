@@ -4,9 +4,17 @@ subscription OnComment {
         commentId
         issue {
             number
+            repo {
+                name
+                owner
+            }
         }
         pullRequest {
             number
+            repo {
+                name
+                owner
+            }
         }
         by {
             name
