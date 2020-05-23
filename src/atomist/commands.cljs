@@ -71,8 +71,8 @@
                 (log/info "label is not present"))
               (if (not response)
                 (<! (github/add-label request {:name (first labels)
-                                                       :color "f29513" ;; TODO default
-                                                       :description "chatops"})))
+                                               :color "f29513" ;; TODO default
+                                               :description "chatops"})))
               (let [response (<! (github/put-label
                                   {:token token :owner (:owner repo) :repo (:name repo)
                                    :labels labels :number number}))]
