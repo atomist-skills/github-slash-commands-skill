@@ -84,7 +84,7 @@
        (check-push-or-comment)
        (api/add-skill-config :keyword)
        (api/extract-github-token)
-       (api/create-ref-from-push-event)
+       (api/create-ref-from-event)
        (api/add-slack-source-to-event)
        (api/log-event)
        (api/status :send-status (fn [{{:keys [errors status]} :status :as request}]

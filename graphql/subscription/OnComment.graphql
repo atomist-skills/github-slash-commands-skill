@@ -5,15 +5,25 @@ subscription OnComment {
         issue {
             number
             repo {
+                id
                 name
                 owner
+                org {
+                    id
+                    owner
+                }
             }
         }
         pullRequest {
             number
             repo {
+                id
                 name
                 owner
+                org {
+                    id
+                    owner
+                }
             }
         }
         by {
