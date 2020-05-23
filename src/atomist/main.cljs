@@ -30,7 +30,7 @@
         (<! (handler request))))))
 
 (defn add-command [handler]
-  (fn [{:keys [command args token repo number branch message] :as request}]
+  (fn [{:keys [command args token repo number branch message default-color] :as request}]
     (go
       (<! (slack/slack-message request))
       (<! (handler (assoc request
@@ -41,7 +41,8 @@
                                      :command/repo repo
                                      :command/message message}
                                     (if (= "label" command)
-                                      {:label/number number})
+                                      {:label/number number
+                                       :label/default-color (or default-color "f29513")})
                                     (if (= "pr" command)
                                       {:pr/branch branch}))))))))
 
@@ -82,7 +83,7 @@
        (validate-command)
        (add-command)
        (check-push-or-comment)
-       (api/add-skill-config :keyword)
+       (api/add-skill-config :keyword :default-color)
        (api/extract-github-token)
        (api/create-ref-from-event)
        (api/add-slack-source-to-event)

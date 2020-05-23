@@ -2,7 +2,7 @@
   (:require [cljs.spec.alpha :as s]
             [atomist.cljs-log :as log]
             [atomist.shell :as shell]
-            [cljs.core.async :refer [<!]]
+            [cljs.core.async :refer [<!] :as async]
             [clojure.string :as string]
             [goog.string :as gstring]
             [goog.string.format]
@@ -14,7 +14,8 @@
 (s/def :command/spec (s/or :label :label/label
                            :pr :pr/pr))
 (s/def :label/number integer?)
-(s/def :label/label (s/merge :command/base (s/keys :req [:label/number])))
+(s/def :label/default-color string?)
+(s/def :label/label (s/merge :command/base (s/keys :req [:label/number :label/default-color])))
 (s/def :pr/pr (s/merge :command/base (s/keys :req [:pr/branch])))
 (s/def :command/command #{"pr" "label"})
 (s/def :command/args string?)
@@ -42,39 +43,59 @@
           (:status response))
         {:errors errors}))))
 
-(defmethod run "label" [{:command/keys [args token repo message]
-                         :label/keys [number]}]
+(defn ensure-label [request label default-color]
   (go
-    (let [labels (-> args
-                     (string/split #",")
-                     (->>
+    (let [response (<! (github/get-label request label))]
+      (if (not response)
+        (<! (github/add-label request {:name label
+                                       :color default-color
+                                       :description "added by atomist/git-chatops-skill"}))
+        response))))
+
+(defmethod run "label" [{:command/keys [args token repo message]
+                         :label/keys [number default-color]}]
+  (go
+    (let [{{:keys [rm]} :options errors :errors just-args :arguments}
+          (shell/raw-message->options {:raw_message args}
+                                      [[nil "--rm"]])
+          request {:ref {:owner (:owner repo) :repo (:name repo)}
+                   :number number
+                   :token token}
+          labels (->> just-args
+                      (mapcat #(string/split % #","))
                       (map string/trim)
                       (map (fn [label] (if (or (< (count label) 3)
                                                (re-find #"[\.\#]" label))
                                          :error
                                          label)))
-                      (into [])))]
+                      (into []))]
       (log/info "labels to create:  " (pr-str labels))
       (if (some #(= :error %) labels)
         {:errors [(gstring/format "invalid label names %s" labels)]}
-        (let [{{:keys [rm]} :options errors :errors}
-              (shell/raw-message->options {:raw_message args}
-                                          [[nil "--rm"]])
-              request {:ref {:owner (:owner repo) :repo (:name repo)}
-                       :token token}]
-          (if rm
-            (let [response (<! (github/rm-label request (first labels)))]
-              response)
-            (let [response (<! (github/get-label request (first labels)))]
-              (if response
-                (log/info "label is present")
-                (log/info "label is not present"))
-              (if (not response)
-                (<! (github/add-label request {:name (first labels)
-                                                       :color "f29513" ;; TODO default
-                                                       :description "chatops"})))
-              (let [response (<! (github/put-label
-                                  {:token token :owner (:owner repo) :repo (:name repo)
-                                   :labels labels :number number}))]
-                (log/info response)
-                response))))))))
+        (if rm
+          (let [response (<! (->> (for [label labels] (github/rm-label request label))
+                                  (async/merge)
+                                  (async/reduce conj [])))]
+            (log/debugf "rm-labels: %s" (->> response
+                                             (map :status)
+                                             (interpose ",")
+                                             (apply str))))
+          (do
+            (let [response (<! (->> (for [label labels] (ensure-label request label default-color))
+                                    (async/merge)
+                                    (async/reduce conj [])))]
+              (log/debugf "ensure-labels:  %s" (->> response
+                                                    (map :status)
+                                                    (interpose ",")
+                                                    (apply str))))
+            (log/debugf "put-labels: %s" (:status (<! (github/put-label
+                                                       (assoc request
+                                                         :labels labels)))))))))))
+
+(run {:command/command "label"
+      :command/args "hey2,hey3 hey4"
+      :command/repo {:owner "atomist-skills"
+                     :name "git-chatops-skill"}
+      :command/token "bccf5898b3eaf2f54b71f1538444f92da97737e9"
+      :label/number 9
+      :label/default-color "f29513"})
