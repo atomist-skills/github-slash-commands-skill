@@ -46,7 +46,7 @@
                                       {:pr/branch branch}))))))))
 
 (defn atomist-command [keyword s]
-  (re-find (re-pattern (gstring/format "(?m)%s (\\w+)(.*)?" keyword)) s))
+  (re-find (re-pattern (gstring/format "(?m)%s (\\w+)(.*)?" (or keyword "atomist"))) s))
 
 (defn push-mode [{:keys [keyword]} {[{:keys [branch repo] {:keys [message sha] {:keys [login]} :author} :after}] :Push}]
   (let [[_ command args] (atomist-command keyword message)]

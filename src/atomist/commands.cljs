@@ -53,6 +53,7 @@
                                          :error
                                          label)))
                       (into [])))]
+      (log/info "labels to create:  " (pr-str labels))
       (if (some #(= :error %) labels)
         {:errors [(gstring/format "invalid label names %s" labels)]}
         (let [request {:ref {:owner (:owner repo) :repo (:name repo)}
