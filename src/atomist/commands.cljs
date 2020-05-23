@@ -10,7 +10,8 @@
 
 (defmulti run :command/command)
 
-(s/def :command/spec (s/or :label/label :pr/pr))
+(s/def :command/spec (s/or :label :label/label
+                           :pr :pr/pr))
 (s/def :label/number integer?)
 (s/def :label/label (s/merge :command/base (s/keys :req [:label/number])))
 (s/def :pr/pr (s/merge :command/base (s/keys :req [:pr/branch])))
