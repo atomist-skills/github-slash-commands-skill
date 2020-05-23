@@ -34,16 +34,16 @@
     (go
       (<! (slack/slack-message request))
       (<! (handler (assoc request
-                     :command (merge
-                               {:command/command command
-                                :command/args args
-                                :command/token token
-                                :command/repo repo
-                                :command/message message}
-                               (if (= "label" command)
-                                 {:label/number number})
-                               (if (= "pr" command)
-                                 {:pr/branch branch}))))))))
+                          :command (merge
+                                    {:command/command command
+                                     :command/args args
+                                     :command/token token
+                                     :command/repo repo
+                                     :command/message message}
+                                    (if (= "label" command)
+                                      {:label/number number})
+                                    (if (= "pr" command)
+                                      {:pr/branch branch}))))))))
 
 (defn atomist-command [keyword s]
   (re-find (re-pattern (gstring/format "(?m)%s (\\w+)(.*)?" keyword)) s))
@@ -99,12 +99,12 @@
                                       "check this")))))))
 
 (comment
- (enable-console-print!)
- (atomist.local-runner/set-env :prod-github-auth)
- (-> (atomist.local-runner/fake-push "T29E48P34" "atomist-skills" "git-chatops-skill" "branch1")
-     (assoc-in [:data :Push 0 :after :message] "some stuff \natomist pr --title thing")
-     (assoc :configuration {:name "whatever"
-                            :parameters [{:name "keyword"
-                                          :value "atomist"}]})
-     (atomist.local-runner/call-event-handler atomist.main/handler)))
+  (enable-console-print!)
+  (atomist.local-runner/set-env :prod-github-auth)
+  (-> (atomist.local-runner/fake-push "T29E48P34" "atomist-skills" "git-chatops-skill" "branch1")
+      (assoc-in [:data :Push 0 :after :message] "some stuff \natomist pr --title thing")
+      (assoc :configuration {:name "whatever"
+                             :parameters [{:name "keyword"
+                                           :value "atomist"}]})
+      (atomist.local-runner/call-event-handler atomist.main/handler)))
 

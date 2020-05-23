@@ -55,7 +55,7 @@
       (if (some #(= :error %) labels)
         {:errors [(gstring/format "invalid label names %s" labels)]}
         (let [request {:ref {:owner (:owner repo) :repo (:name repo)}
-               :token token}
+                       :token token}
               response (<! (atomist.github/get-label request (first labels)))]
           (if response
             (log/info "label is present")
