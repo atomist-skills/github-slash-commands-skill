@@ -5,7 +5,8 @@
             [cljs.core.async :refer [<!]]
             [clojure.string :as string]
             [goog.string :as gstring]
-            [goog.string.format])
+            [goog.string.format]
+            [atomist.github :as github])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defmulti run :command/command)
@@ -56,18 +57,24 @@
       (log/info "labels to create:  " (pr-str labels))
       (if (some #(= :error %) labels)
         {:errors [(gstring/format "invalid label names %s" labels)]}
-        (let [request {:ref {:owner (:owner repo) :repo (:name repo)}
-                       :token token}
-              response (<! (atomist.github/get-label request (first labels)))]
-          (if response
-            (log/info "label is present")
-            (log/info "label is not present"))
-          (if (not response)
-            (<! (atomist.github/add-label request {:name (first labels)
-                                                   :color "f29513" ;; TODO default
-                                                   :description "chatops"})))
-          (let [response (<! (atomist.github/put-label
-                              {:token token :owner (:owner repo) :repo (:name repo)
-                               :labels labels :number number}))]
-            (log/info response)
-            {:status response}))))))
+        (let [{{:keys [rm]} :options errors :errors}
+              (shell/raw-message->options {:raw_message args}
+                                          [[nil "--rm"]])
+              request {:ref {:owner (:owner repo) :repo (:name repo)}
+                       :token token}]
+          (if rm
+            (let [response (<! (github/rm-label request (first labels)))]
+              response)
+            (let [response (<! (github/get-label request (first labels)))]
+              (if response
+                (log/info "label is present")
+                (log/info "label is not present"))
+              (if (not response)
+                (<! (github/add-label request {:name (first labels)
+                                                       :color "f29513" ;; TODO default
+                                                       :description "chatops"})))
+              (let [response (<! (github/put-label
+                                  {:token token :owner (:owner repo) :repo (:name repo)
+                                   :labels labels :number number}))]
+                (log/info response)
+                response))))))))
