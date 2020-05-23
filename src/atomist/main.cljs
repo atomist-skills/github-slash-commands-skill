@@ -7,43 +7,20 @@
             [clojure.data]
             [atomist.cljs-log :as log]
             [atomist.github]
-            [cljs.spec.alpha :as s])
+            [cljs.spec.alpha :as s]
+            [atomist.local-runner]
+            [atomist.commands :as commands]
+            [atomist.slack-debug :as slack])
   (:require-macros [cljs.core.async.macros :refer [go]]))
-
-(defn no-null-format [f & args]
-  (try
-    (apply gstring/format f args)
-    (catch :default _
-      f)))
-
-(defn slack-message [{:keys [command args login repo] :as request}]
-  (-> request
-      (api/channel "git-chatops-skill")
-      (api/simple-message (no-null-format "```run %s %s \n    on %s/%s from %s```"
-                                          command
-                                          args
-                                          (:owner repo)
-                                          (:name repo)
-                                          login))))
-
-(defmulti run :command/command)
-(defmethod run "pr" [{:command/keys [args token repo message]
-                      :pr/keys [branch]}]
-  (go (<! (atomist.github/post-pr
-           {:token token :owner (:owner repo) :repo (:name repo)}
-           "title" "body" branch "base"))))
-(defmethod run "label" [{:command/keys [args token repo message]
-                         :label/keys [number]}]
-  (go {:return "return"}))
 
 (defn run-command [handler]
   (fn [request]
     (go
-      (assoc request :return (<! (run (:command request)))))))
+      (<! (handler (assoc request :return (<! (commands/run (:command request)))))))))
 
 (defn validate-command-spec [d]
   (if (not (s/valid? :command/spec d))
-    (str (s/explain :command/spec d))))
+    (with-out-str (s/explain :command/spec d))))
 
 (defn validate-command [handler]
   (fn [request]
@@ -55,21 +32,21 @@
 (defn add-command [handler]
   (fn [{:keys [command args token repo number branch message] :as request}]
     (go
-      (<! (slack-message request))
+      (<! (slack/slack-message request))
       (<! (handler (assoc request
-                          :command (merge
-                                    {:command/command command
-                                     :command/args args
-                                     :command/token token
-                                     :command/repo repo
-                                     :command/message message}
-                                    (if (= "label" command)
-                                      {:label/number number})
-                                    (if (= "pr" command)
-                                      {:pr/branch branch}))))))))
+                     :command (merge
+                               {:command/command command
+                                :command/args args
+                                :command/token token
+                                :command/repo repo
+                                :command/message message}
+                               (if (= "label" command)
+                                 {:label/number number})
+                               (if (= "pr" command)
+                                 {:pr/branch branch}))))))))
 
 (defn atomist-command [keyword s]
-  (re-find (re-pattern (gstring/format "(?m)%s (\w+)(.*)?" keyword)) s))
+  (re-find (re-pattern (gstring/format "(?m)%s (\\w+)(.*)?" keyword)) s))
 
 (defn push-mode [{:keys [keyword]} {[{:keys [branch repo] {:keys [message sha] {:keys [login]} :author} :after}] :Push}]
   (let [[_ command args] (atomist-command keyword message)]
@@ -107,9 +84,27 @@
        (check-push-or-comment)
        (api/add-skill-config :keyword)
        (api/extract-github-token)
+       (api/create-ref-from-push-event)
        (api/add-slack-source-to-event)
        (api/log-event)
-       (api/status :send-status (fn [request] (if-let [data-keys (-> request :data keys)]
-                                                (gstring/format "processed %s" data-keys)
-                                                "check this"))))))
+       (api/status :send-status (fn [{{:keys [errors status]} :status :as request}]
+                                  (cond
+                                    (not (empty? errors))
+                                    (apply str errors)
+                                    (not (nil? status))
+                                    (gstring/format "command status %s" status)
+                                    :else
+                                    (if-let [data-keys (-> request :data keys)]
+                                      (gstring/format "processed %s" data-keys)
+                                      "check this")))))))
+
+(comment
+ (enable-console-print!)
+ (atomist.local-runner/set-env :prod-github-auth)
+ (-> (atomist.local-runner/fake-push "T29E48P34" "atomist-skills" "git-chatops-skill" "branch1")
+     (assoc-in [:data :Push 0 :after :message] "some stuff \natomist pr --title thing")
+     (assoc :configuration {:name "whatever"
+                            :parameters [{:name "keyword"
+                                          :value "atomist"}]})
+     (atomist.local-runner/call-event-handler atomist.main/handler)))
 

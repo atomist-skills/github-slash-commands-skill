@@ -23,6 +23,11 @@
                 :name "keyword"
                 :required false
                 :placeHolder "atomist"}}
+              {:string
+               {:description "default label color"
+                :name "default_color"
+                :required false
+                :placeHolder "f29513"}}
               {:repoFilter
                {:description "The set of Repositories.",
                 :displayName "Repository Scope",
