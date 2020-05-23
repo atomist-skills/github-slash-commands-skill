@@ -15,15 +15,16 @@ For example, if you'd like to create a Pull Request after a successful Push, inc
 > this is my commit message
 > but I can also add a command
 >
-> atomist pr --title 'my title' --base master
+> /atomist pr --title 'my title' --base master
 > END
 > )"
 ```
 
-When configuring this skill, you can change the keyword used to trigger a command to something else.
+When configuring this skill, you can change the keyword used to trigger a command to something else.  All keywords
+must start with a `/`
 
 ```
-<keyword> pr --title 'my title' --base master
+/<keyword> pr --title 'my title' --base master
 ```
 
 # Before you get started
@@ -64,7 +65,7 @@ repositories that should be scanned.
     Commit message.  You can include this anywhere in the message:
     
     ```
-    <keyword> pr --title 'any title surrounded by quotes' --base target-branch-ref
+    /<keyword> pr --title 'any title surrounded by quotes' --base target-branch-ref
     ```
     
 2.  **Add a Comment to an open PR**
@@ -73,7 +74,7 @@ repositories that should be scanned.
     Request. 
 
     ```
-    <keyword> pr --base master --comment
+    /<keyword> pr --base master --comment
     ```
     
     The rest of the commit message will be transcribed into the PR comment body.
@@ -83,16 +84,17 @@ repositories that should be scanned.
     When commenting on an issue, you can add labels to that issue by commenting directly in the Issue:
     
     ```
-    <keyword> label label-name
+    /<keyword> label label1,label2
     ```
     
     You can also remove labels from an Issue:
     
     ```
-    <keyword> label rm label-name
+    /<keyword> label --rm label1
     ```
 
-To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/git-chatops-skill/issues). See the [code](https://github.com/atomist-skills/git-chatops-skill) for the skill.
+To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/git-chatops-skill/issues). 
+See the [code](https://github.com/atomist-skills/git-chatops-skill) for the skill.
 
 <!---atomist-skill-readme:end--->
 

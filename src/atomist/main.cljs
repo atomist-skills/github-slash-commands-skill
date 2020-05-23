@@ -46,7 +46,7 @@
                                       {:pr/branch branch}))))))))
 
 (defn atomist-command [keyword s]
-  (re-find (re-pattern (gstring/format "(?m)%s (\\w+)(.*)?" (or keyword "atomist"))) s))
+  (re-find (re-pattern (gstring/format "(?m)/%s (\\w+)(.*)?" (or keyword "atomist"))) s))
 
 (defn push-mode [{:keys [keyword]} {[{:keys [branch repo] {:keys [message sha] {:keys [login]} :author} :after}] :Push}]
   (let [[_ command args] (atomist-command keyword message)]
@@ -107,7 +107,7 @@
                              :parameters [{:name "keyword"
                                            :value "atomist"}]})
       (atomist.local-runner/call-event-handler atomist.main/handler))
-  (-> (atomist.local-runner/fake-comment-on-issue "T29E48P34" "atomist-skills" "git-chatops-skill" 9 "atomist label hey2")
+  (-> (atomist.local-runner/fake-comment-on-issue "T29E48P34" "atomist-skills" "git-chatops-skill" 9 "/atomist label hey2")
       (assoc :configuration {:name "whatever"
                              :parameters [{:name "keyword"
                                            :value "atomist"}]})
