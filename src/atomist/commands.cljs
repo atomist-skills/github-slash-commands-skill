@@ -46,6 +46,7 @@
 (defn ensure-label [request label default-color]
   (go
     (let [response (<! (github/get-label request label))]
+      (log/info "get-label: " response)
       (if (not response)
         (<! (github/add-label request {:name label
                                        :color default-color
