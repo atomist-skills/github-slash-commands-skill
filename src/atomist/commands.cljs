@@ -6,29 +6,72 @@
             [clojure.string :as string]
             [goog.string :as gstring]
             [goog.string.format]
-            [atomist.github :as github])
+            [atomist.github :as github]
+            [atomist.api :as api])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defmulti run :command/command)
+(defmulti run (comp :command/command :command))
 
 (s/def :command/spec (s/or :label :label/label
-                           :pr :pr/pr))
+                           :pr :pr/pr
+                           :cc :cc/cc))
+(s/def :push/branch string?)
+(s/def :push/sha string?)
 (s/def :label/number integer?)
 (s/def :label/default-color string?)
 (s/def :label/label (s/merge :command/base (s/keys :req [:label/number :label/default-color])))
-(s/def :pr/pr (s/merge :command/base (s/keys :req [:pr/branch])))
-(s/def :command/command #{"pr" "label"})
+(s/def :pr/pr (s/merge :command/base (s/keys :req [:push/branch])))
+(s/def :command/command #{"pr" "label" "cc"})
 (s/def :command/args string?)
 (s/def :repo/owner string?)
 (s/def :repo/name string?)
 (s/def :command/repo (s/keys :req-un [:repo/owner :repo/name]))
 (s/def :command/token string?)
 (s/def :command/message string?)
-(s/def :command/base (s/keys :req [:command/command :command/args :command/token :command/repo :command/message]))
-(s/def :command/pr (s/keys :req []))
+(s/def :command/base (s/keys :req [:command/command :command/args :command/token :command/repo :command/message :command/login]))
+(s/def :command/login string?)
+(s/def :cc/cc (s/merge :command/base (s/keys :opt [:label/number :push/branch :push/sha])))
 
-(defmethod run "pr" [{:command/keys [args token repo message]
-                      :pr/keys [branch]}]
+(defn setup-channel [request s]
+  (if-let [[_ channel] (re-find #"^#(.*)$" s)]
+    (api/channel request channel)
+    (if-let [[_ user] (re-find #"^@(.*)$" s)]
+      (api/user request user)
+      request)))
+
+(defn message-or-comment [{{:command/keys [repo]
+                            :label/keys [number]
+                            :push/keys [sha]} :command}]
+  (if number
+    [(gstring/format "https://github.com/%s/%s/issues/%d" (:owner repo) (:name repo) number)
+     (gstring/format "Issue #%d" number)]
+    [(gstring/format "https://github.com/%s/%s/commit/%s" (:owner repo) (:name repo) sha)
+     (gstring/format "Commit %s" sha)]))
+
+(defmethod run "cc" [{{:command/keys [args login message]} :command :as request}]
+  (go
+    (let [{_ :options errors :errors just-args :arguments}
+          (shell/raw-message->options {:raw_message args}
+                                      [[nil "--slack"]])
+          channel-or-user (first just-args)]
+      (if (empty? errors)
+        (if (or (string/starts-with? channel-or-user "#") (string/starts-with? channel-or-user "@"))
+          (let [[url s] (message-or-comment request)
+                response (<! (-> request
+                                 (setup-channel channel-or-user)
+                                 (api/block-message [{:type "section"
+                                                      :text {:type "mrkdwn"
+                                                             :text (gstring/format "CC from %s in *<%s|%s>*"
+                                                                                   login url s)}}
+                                                     {:type "section"
+                                                      :text {:type "mrkdwn"
+                                                             :text (gstring/format "```%s```" (apply str (take 400 message)))}}])))]
+            (:status response))
+          {:errors "argument to cc must begin with either a '@' or a '#'"})
+        {:errors errors}))))
+
+(defmethod run "pr" [{{:command/keys [args token repo message]
+                       :pr/keys [branch]} :command}]
   (go
     (let [{{:keys [title base]} :options errors :errors}
           (shell/raw-message->options {:raw_message args}
@@ -52,8 +95,8 @@
                                        :description "added by atomist/git-chatops-skill"}))
         response))))
 
-(defmethod run "label" [{:command/keys [args token repo message]
-                         :label/keys [number default-color]}]
+(defmethod run "label" [{{:command/keys [args token repo message]
+                          :label/keys [number default-color]} :command}]
   (go
     (let [{{:keys [rm]} :options errors :errors just-args :arguments}
           (shell/raw-message->options {:raw_message args}
@@ -93,10 +136,10 @@
                                                               :labels labels)))))))))))
 
 (comment
-  (run {:command/command "label"
-        :command/args "hey2,hey3 hey4"
-        :command/repo {:owner "atomist-skills"
-                       :name "git-chatops-skill"}
-        :command/token ""
-        :label/number 9
-        :label/default-color "f29513"}))
+  (run {:command {:command/command "label"
+                  :command/args "hey1,hey2"
+                  :command/repo {:owner "atomist-skills"
+                                 :name "git-chatops-skill"}
+                  :command/token ""
+                  :label/number 14
+                  :label/default-color "f29513"}}))

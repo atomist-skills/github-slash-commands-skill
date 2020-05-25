@@ -32,8 +32,10 @@ must start with a `/`
 Connect and configure these integrations:
 
 1. **GitHub**
+2. **Slack** (optional)
 
-The **GitHub** integration must be configured in order to use this skill. At least one repository must be selected. We recommend connecting the **Slack** integration.
+The **GitHub** integration must be configured in order to use this skill. At least one repository must be selected. 
+We recommend connecting the **Slack** integration.
 
 # How to configure
 
@@ -70,8 +72,8 @@ repositories that should be scanned.
     
 2.  **Add a Comment to an open PR**
 
-    When you check in to an branch with an open Pull Request, you can use commit messages to add comments to that Pull
-    Request. 
+    When you check in to a branch with an open Pull Request, you can use commit messages to add additional 
+    comments to that Pull Request. 
 
     ```
     /<keyword> pr --base master --comment
@@ -92,6 +94,18 @@ repositories that should be scanned.
     ```
     /<keyword> label --rm label1
     ```
+
+4.  **CC a Slack channel or User**
+
+    This command works with our Slack integration.
+    
+    ```
+    /<keyword> cc #<slack-channel>
+    /<keyword> cc @<slack-user>
+    ```
+    
+    The above commands can be added to either Comments, or Commit messages.  A link to the Commit, or to the Comment,
+    will be sent to the Channel or User.  Slack channels must be prefixed by `#`, and Slack users must be prefixed by `@`.
 
 To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/git-chatops-skill/issues). 
 See the [code](https://github.com/atomist-skills/git-chatops-skill) for the skill.

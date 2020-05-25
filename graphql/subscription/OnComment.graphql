@@ -28,6 +28,7 @@ subscription OnComment {
         }
         by {
             name
+            login
             person {
                 forename
                 surname
