@@ -124,5 +124,11 @@
       (assoc :configuration {:name "whatever"
                              :parameters [{:name "keyword"
                                            :value "atomist"}]})
+      (atomist.local-runner/call-event-handler atomist.main/handler))
+
+  (-> (atomist.local-runner/fake-comment-on-issue "T29E48P34" "atomist-skills" "git-chatops-skill" 15 "/atomist cc #git-chatops-skill")
+      (assoc :configuration {:name "whatever"
+                             :parameters [{:name "keyword"
+                                           :value "atomist"}]})
       (atomist.local-runner/call-event-handler atomist.main/handler)))
 

@@ -55,7 +55,9 @@
                                       [[nil "--slack"]])
           channel-or-user (first just-args)]
       (if (empty? errors)
-        (if (or (string/starts-with? channel-or-user "#") (string/starts-with? channel-or-user "@"))
+        (if (or
+             (string/starts-with? channel-or-user "#")
+             (string/starts-with? channel-or-user "@"))
           (let [[url s] (message-or-comment request)
                 response (<! (-> request
                                  (setup-channel channel-or-user)
