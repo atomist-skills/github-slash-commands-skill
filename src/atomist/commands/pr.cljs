@@ -6,7 +6,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defmethod run "pr" [{{:command/keys [args token repo message]
-                       :pr/keys [branch]} :command}]
+                       :push/keys [branch]} :command}]
   (go
     (let [{{:keys [title base]} :options errors :errors}
           (shell/raw-message->options {:raw_message args}
