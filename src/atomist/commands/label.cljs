@@ -57,13 +57,13 @@
                                                     (apply str))))
             (log/debugf "put-labels: %s" (:status (<! (github/put-label
                                                        (assoc request
-                                                         :labels labels)))))))))))
+                                                              :labels labels)))))))))))
 
 (comment
- (run {:command {:command/command "label"
-                 :command/args "hey1,hey2"
-                 :command/repo {:owner "atomist-skills"
-                                :name "git-chatops-skill"}
-                 :command/token "bccf5898b3eaf2f54b71f1538444f92da97737e9"
-                 :label/number 15
-                 :label/default-color "f29513"}}))
+  (run {:command {:command/command "label"
+                  :command/args "hey1,hey2"
+                  :command/repo {:owner "atomist-skills"
+                                 :name "git-chatops-skill"}
+                  :command/token "bccf5898b3eaf2f54b71f1538444f92da97737e9"
+                  :label/number 15
+                  :label/default-color "f29513"}}))
