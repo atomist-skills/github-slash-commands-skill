@@ -12,19 +12,16 @@
             [atomist.commands :as commands]
             [atomist.commands.cc]
             [atomist.commands.label]
-            [atomist.commands.pr]
-            [atomist.slack-debug :as slack])
+            [atomist.commands.pr])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn run-commands [handler]
   (fn [request]
     (go
-      (log/info "run commands " (:commands request))
       (let [return-values (<! (->> (for [command (:commands request)]
                                      (commands/run (assoc request :command command)))
                                    (async/merge)
                                    (async/reduce conj [])))]
-        (log/info "return values " return-values)
         (<! (handler (assoc request :return return-values)))))))
 
 (defn validate-command-spec [d]
@@ -44,7 +41,6 @@
 (defn add-commands [handler]
   (fn [{:keys [intents] :as request}]
     (go
-      (<! (slack/slack-message request))
       (<! (handler (assoc request
                      :commands (for [intent intents
                                      :let [{:keys [command args repo number branch message default-color sha login]} intent]]
