@@ -3,6 +3,6 @@
 
 (def module-name "git-chatops-skill")
 (def path ".")
-(def version "0.1.21")
-(def tag "0.1.21")
-(def generated-at "2020-05-26T19:58:28Z")
+(def version "0.1.22")
+(def tag "0.1.22")
+(def generated-at "2020-05-26T20:22:44Z")
