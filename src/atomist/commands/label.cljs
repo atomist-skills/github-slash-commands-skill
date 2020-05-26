@@ -13,7 +13,7 @@
   (go
     (let [response (<! (github/get-label request label))]
       (log/info "get-label: " response)
-      (if (not response)
+      (if (= "Not Found" (:message response))
         (<! (github/add-label request {:name label
                                        :color default-color
                                        :description "added by atomist/git-chatops-skill"}))
