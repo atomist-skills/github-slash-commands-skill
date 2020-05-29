@@ -59,17 +59,17 @@
                                        (if sha
                                          {:push/sha sha})))))))))
 
-(defn atomist-commands [keyword s]
-  (re-seq (re-pattern (gstring/format "(?m)/%s (\\w+)(.*)?" (or keyword "atomist"))) s))
+(defn atomist-commands [s]
+  (re-seq (re-pattern (gstring/format "(?m)/(pr|cc|label|wish) (.*)?" (or keyword "atomist"))) s))
 
 (defn push-mode [{:keys [keyword]} {[{:keys [branch repo] {:keys [message sha] {:keys [login]} :author} :after}] :Push}]
-  (->> (for [[_ command args] (atomist-commands keyword message)]
+  (->> (for [[_ command args] (atomist-commands message)]
          (if command
            {:command command :args args :repo repo :branch branch :login login :message message :sha sha}))
        (filter identity)))
 
 (defn comment-mode [{:keys [keyword]} {[{:keys [body issue pullRequest] {:keys [login]} :by}] :Comment}]
-  (->> (for [[_ command args] (atomist-commands keyword body)]
+  (->> (for [[_ command args] (atomist-commands body)]
          (if command
            (merge (or issue pullRequest) {:login login :command command :args args :message body})))
        (filter identity)))
@@ -96,7 +96,7 @@
        (validate-commands)
        (add-commands)
        (check-push-or-comment-for-intents)
-       (api/add-skill-config :keyword :default-color)
+       (api/add-skill-config :default-color)
        (api/extract-github-token)
        (api/create-ref-from-event)
        (api/add-slack-source-to-event)

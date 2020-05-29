@@ -24,11 +24,6 @@
                       :minRequired 0,
                       :maxAllowed 1}]
  :parameters [{:string
-               {:description "keyword to use to recognize a command"
-                :name "keyword"
-                :required false
-                :placeHolder "atomist"}}
-              {:string
                {:description "default label color"
                 :name "default-color"
                 :required false
