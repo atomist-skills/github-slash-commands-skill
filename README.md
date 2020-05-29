@@ -15,16 +15,9 @@ For example, if you'd like to create a Pull Request after a successful Push, inc
 > this is my commit message
 > but I can also add a command
 >
-> /atomist pr --title 'my title' --base master
+> /pr --title 'my title' --base master
 > END
 > )"
-```
-
-When configuring this skill, you can change the keyword used to trigger a command to something else.  All keywords
-must start with a `/`
-
-```
-/<keyword> pr --title 'my title' --base master
 ```
 
 # Before you get started
@@ -42,14 +35,8 @@ We recommend connecting the **Slack** integration.
 You can enable this skill without configuring any target versions.  In this mode, the skill will collect
 data about your library versions, but will take no action.  Simply select the set of
 repositories that should be scanned.
-
-1. **Configure the keyword used to recognize commands**
-
-    ![Repository filter](docs/images/screenshot1.png)
-
-    Switch the default keyword from `atomist` to something customized for your team.
  
-2. **Determine repository scope**
+1. **Determine repository scope**
 
     ![Repository filter](docs/images/repo-filter.png)
 
@@ -67,7 +54,7 @@ repositories that should be scanned.
     Commit message.  You can include this anywhere in the message:
     
     ```
-    /<keyword> pr --title 'any title surrounded by quotes' --base target-branch-ref
+    /pr --title 'any title surrounded by quotes' --base target-branch-ref
     ```
     
 2.  **Add a Comment to an open PR**
@@ -76,7 +63,7 @@ repositories that should be scanned.
     comments to that Pull Request. 
 
     ```
-    /<keyword> pr --base master --comment
+    /pr --base master --comment
     ```
     
     The rest of the commit message will be transcribed into the PR comment body.
@@ -86,13 +73,13 @@ repositories that should be scanned.
     When commenting on an issue, you can add labels to that issue by commenting directly in the Issue:
     
     ```
-    /<keyword> label label1,label2
+    /label label1,label2
     ```
     
     You can also remove labels from an Issue:
     
     ```
-    /<keyword> label --rm label1
+    /label --rm label1
     ```
 
 4.  **CC a Slack channel or User**
@@ -100,8 +87,8 @@ repositories that should be scanned.
     This command works with our Slack integration.
     
     ```
-    /<keyword> cc #<slack-channel>
-    /<keyword> cc @<slack-user>
+    /cc #<slack-channel>
+    /cc @<slack-user>
     ```
     
     The above commands can be added to either Comments, or Commit messages.  A link to the Commit, or to the Comment,
