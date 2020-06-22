@@ -13,8 +13,9 @@ This page details all runtime OSS dependencies of `atomist-skill`.
 |[BSD-3-Clause](#bsd-3-clause)|14|
 |[CC0-1.0](#cc0-10)|1|
 |[GPL-2.0](#gpl-20)|1|
-|[ISC](#isc)|18|
-|[MIT](#mit)|120|
+|[ISC](#isc)|19|
+|[MIT](#mit)|121|
+|[UNKNOWN](#unknown)|1|
 
 #### Apache-2.0
 Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
@@ -111,6 +112,7 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 |`rimraf`|`3.0.2`|Isaac Z. Schlueter|[https://github.com/isaacs/rimraf](https://github.com/isaacs/rimraf)|
 |`semver`|`5.7.1`||[https://github.com/npm/node-semver](https://github.com/npm/node-semver)|
 |`semver`|`6.3.0`||[https://github.com/npm/node-semver](https://github.com/npm/node-semver)|
+|`semver`|`7.3.2`||[https://github.com/npm/node-semver](https://github.com/npm/node-semver)|
 |`signal-exit`|`3.0.3`|Ben Coe|[https://github.com/tapjs/signal-exit](https://github.com/tapjs/signal-exit)|
 |`wrappy`|`1.0.2`|Isaac Z. Schlueter|[https://github.com/npm/wrappy](https://github.com/npm/wrappy)|
 |`write-file-atomic`|`3.0.3`|Rebecca Turner|[https://github.com/npm/write-file-atomic](https://github.com/npm/write-file-atomic)|
@@ -177,6 +179,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 |`is`|`3.3.0`|Enrico Marino|[https://github.com/enricomarino/is](https://github.com/enricomarino/is)|
 |`isarray`|`1.0.0`|Julian Gruber|[https://github.com/juliangruber/isarray](https://github.com/juliangruber/isarray)|
 |`js-yaml`|`3.13.1`|Vladimir Zapparov|[https://github.com/nodeca/js-yaml](https://github.com/nodeca/js-yaml)|
+|`js-yaml`|`3.14.0`|Vladimir Zapparov|[https://github.com/nodeca/js-yaml](https://github.com/nodeca/js-yaml)|
 |`json-bigint`|`0.3.0`|Andrey Sidorov|[https://github.com/sidorares/json-bigint](https://github.com/sidorares/json-bigint)|
 |`jwa`|`2.0.0`|Brian J. Brennan|[https://github.com/brianloveswords/node-jwa](https://github.com/brianloveswords/node-jwa)|
 |`jws`|`4.0.0`|Brian J Brennan|[https://github.com/brianloveswords/node-jws](https://github.com/brianloveswords/node-jws)|
@@ -241,6 +244,12 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 |`walkdir`|`0.4.1`|Ryan Day|[https://github.com/soldair/node-walkdir](https://github.com/soldair/node-walkdir)|
 |`xdg-basedir`|`4.0.0`|Sindre Sorhus|[https://github.com/sindresorhus/xdg-basedir](https://github.com/sindresorhus/xdg-basedir)|
 |`xtend`|`4.0.2`|Raynos|[https://github.com/Raynos/xtend](https://github.com/Raynos/xtend)|
+
+#### UNKNOWN
+
+| Name | Version | Publisher | Repository |
+|------|---------|-----------|------------|
+|`@atomist/api-cljs`|`0.4.43`|jim@atomist.com||
 
 ## Contact
 
