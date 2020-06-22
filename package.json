@@ -6,14 +6,7 @@
     "build": "shadow-cljs release release"
   },
   "dependencies": {
-    "tmp": "^0.2.1",
-    "@atomist/skill-logging": "0.1.0-master.20200316180914",
-    "fast-glob": "^3.2.2",
-    "@google-cloud/pubsub": "^1.0.0",
-    "js-yaml": "^3.13.1",
-    "shell-quote": "^1.7.2",
-    "iconv-lite": "^0.4.19",
-    "@google-cloud/storage": "^4.1.3"
+    "@atomist/api-cljs": "^0.4.50"
   },
   "devDependencies": {
     "shadow-cljs": "^2.8.69",
