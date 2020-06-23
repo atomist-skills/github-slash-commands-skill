@@ -20,7 +20,7 @@
         response))))
 
 (defmethod run "label" [{{:command/keys [args token repo message]
-                          :label/keys [number default-color]} :command}]
+                          :label/keys [number default-color] :or {default-color "f29513"}} :command}]
   (go
     (let [{{:keys [rm]} :options errors :errors just-args :arguments}
           (shell/raw-message->options {:raw_message args}

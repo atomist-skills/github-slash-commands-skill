@@ -96,7 +96,7 @@
        (validate-commands)
        (add-commands)
        (check-push-or-comment-for-intents)
-       (api/add-skill-config :default-color)
+       (api/add-skill-config)
        (api/extract-github-token)
        (api/create-ref-from-event)
        (api/add-slack-source-to-event)

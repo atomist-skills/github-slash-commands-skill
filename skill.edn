@@ -1,0 +1,41 @@
+{:description "Run commands from Commit messages and Issue comments",
+ :license "unknown",
+ :resourceProviders
+ [{:name "github",
+   :description "GitHub",
+   :typeName "GitHubAppResourceProvider",
+   :minRequired 1,
+   :maxAllowed 1}
+  {:name "slack",
+   :description "Slack",
+   :typeName "SlackResourceProvider",
+   :minRequired 0,
+   :maxAllowed 1}],
+ :displayName "GitHub Slash Commands",
+ :name "github-slash-commands-skill",
+ :icon
+ "https://cdn3.iconfinder.com/data/icons/chat-bot-emoji-blue-filled-color/300/14134081Untitled-3-512.png",
+ :title "git chatops skill",
+ :author "slimslenderslacks",
+ :iconUrl
+ "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
+ :runtime
+ {:memory 512,
+  :timeout 60,
+  :entry_point "eventhandler",
+  :name "nodejs10"},
+ :homepageUrl "https://github.com/atomist-skills/git-chatops-skill",
+ :parameters
+ [{:repoFilter
+   {:description "The set of Repositories.",
+    :displayName "Repository Scope",
+    :name "scope",
+    :required false}}],
+ :namespace "atomist",
+ :artifacts
+ {:gcf
+  [{:name "package-cljs-skill",
+    :entryPoint "eventhandler",
+    :memory 512, 
+    :runtime "nodejs10", 
+    :timeout 60}]}}
