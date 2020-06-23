@@ -19,10 +19,10 @@
                                        :description "added by atomist/git-chatops-skill"}))
         response))))
 
-(defmethod run "label" [{{:command/keys [args token repo message]
+(defmethod run "label" [{{:command/keys [args token repo]
                           :label/keys [number default-color] :or {default-color "f29513"}} :command}]
   (go
-    (let [{{:keys [rm]} :options errors :errors just-args :arguments}
+    (let [{{:keys [rm]} :options just-args :arguments}
           (shell/raw-message->options {:raw_message args}
                                       [[nil "--rm"]])
           request {:ref {:owner (:owner repo) :repo (:name repo)}

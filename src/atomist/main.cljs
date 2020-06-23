@@ -1,11 +1,9 @@
 (ns atomist.main
   (:require [atomist.api :as api]
-            [cljs.pprint :refer [pprint]]
             [cljs.core.async :refer [<!] :as async]
             [goog.string :as gstring]
             [goog.string.format]
             [clojure.data]
-            [atomist.cljs-log :as log]
             [atomist.github]
             [cljs.spec.alpha :as s]
             [atomist.local-runner]
@@ -25,7 +23,7 @@
         (<! (handler (assoc request :return return-values)))))))
 
 (defn validate-command-spec [d]
-  (if (not (s/valid? :command/spec d))
+  (when (not (s/valid? :command/spec d))
     (with-out-str (s/explain :command/spec d))))
 
 (defn validate-commands [handler]
@@ -34,7 +32,7 @@
       (let [failures (->> (:commands request)
                           (map validate-command-spec)
                           (filter identity))]
-        (if (not (empty? failures))
+        (if (seq failures)
           (<! (api/finish request :failure (str failures)))
           (<! (handler request)))))))
 
@@ -52,25 +50,25 @@
                                         :command/message message
                                         :command/login login
                                         :label/default-color (or default-color "f29513")}
-                                       (if number
+                                       (when number
                                          {:label/number number})
-                                       (if branch
+                                       (when branch
                                          {:push/branch branch})
-                                       (if sha
+                                       (when sha
                                          {:push/sha sha})))))))))
 
 (defn atomist-commands [s]
   (re-seq (re-pattern (gstring/format "(?m)/(pr|cc|label|wish) (.*)?" (or keyword "atomist"))) s))
 
-(defn push-mode [{:keys [keyword]} {[{:keys [branch repo] {:keys [message sha] {:keys [login]} :author} :after}] :Push}]
+(defn push-mode [_ {[{:keys [branch repo] {:keys [message sha] {:keys [login]} :author} :after}] :Push}]
   (->> (for [[_ command args] (atomist-commands message)]
-         (if command
+         (when command
            {:command command :args args :repo repo :branch branch :login login :message message :sha sha}))
        (filter identity)))
 
-(defn comment-mode [{:keys [keyword]} {[{:keys [body issue pullRequest] {:keys [login]} :by}] :Comment}]
+(defn comment-mode [_ {[{:keys [body issue pullRequest] {:keys [login]} :by}] :Comment}]
   (->> (for [[_ command args] (atomist-commands body)]
-         (if command
+         (when command
            (merge (or issue pullRequest) {:login login :command command :args args :message body})))
        (filter identity)))
 
@@ -82,7 +80,7 @@
                       (contains? data :Push) (push-mode request data)
                       (contains? data :Comment) (comment-mode request data)
                       :else :none)]
-        (if (not (empty? intents))
+        (if (seq intents)
           (<! (handler (assoc request :intents intents)))
           (<! (api/finish request :success "skipping - no intents" :visibility :hidden)))))))
 
@@ -103,7 +101,7 @@
        (api/log-event)
        (api/status :send-status (fn [{{:keys [errors status]} :status :as request}]
                                   (cond
-                                    (not (empty? errors))
+                                    (seq errors)
                                     (apply str errors)
                                     (not (nil? status))
                                     (gstring/format "command status %s" status)

@@ -1,7 +1,5 @@
 (ns atomist.commands.cc
-  (:require [cljs.spec.alpha :as s]
-            [atomist.cljs-log :as log]
-            [atomist.shell :as shell]
+  (:require [atomist.shell :as shell]
             [cljs.core.async :refer [<!]]
             [clojure.string :as string]
             [goog.string :as gstring]

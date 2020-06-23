@@ -13,18 +13,15 @@
    :maxAllowed 1}],
  :displayName "GitHub Slash Commands",
  :name "github-slash-commands-skill",
- :icon
- "https://cdn3.iconfinder.com/data/icons/chat-bot-emoji-blue-filled-color/300/14134081Untitled-3-512.png",
- :title "git chatops skill",
- :author "slimslenderslacks",
+ :author "Atomist",
  :iconUrl
- "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
+ "https://cdn3.iconfinder.com/data/icons/chat-bot-emoji-blue-filled-color/300/14134081Untitled-3-512.png",
  :runtime
  {:memory 512,
   :timeout 60,
   :entry_point "eventhandler",
   :name "nodejs10"},
- :homepageUrl "https://github.com/atomist-skills/git-chatops-skill",
+ :homepageUrl "https://github.com/atomist-skills/github-slash-commands-skill",
  :parameters
  [{:repoFilter
    {:description "The set of Repositories.",

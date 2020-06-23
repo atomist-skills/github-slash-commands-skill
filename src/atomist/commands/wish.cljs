@@ -1,13 +1,9 @@
 (ns atomist.commands.wish
-  (:require [atomist.shell :as shell]
-            [clojure.string :as string]
-            [cljs.core.async :refer [<!] :as async]
+  (:require [cljs.core.async :refer [<!] :refer-macros [go]]
             [atomist.commands :refer [run]]
-            [atomist.cljs-log :as log]
             [goog.string :as gstring]
             [goog.string.format]
-            [atomist.api :as api])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+            [atomist.api :as api]))
 
 (defmethod run "wish" [{{:command/keys [args]} :command :as request}]
   (go

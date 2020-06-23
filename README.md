@@ -1,5 +1,4 @@
-# `atomist/git-chatops-skill`
-# GitHub Slash Commands
+# `atomist/github-slash-commands-skill`
 
 <!---atomist-skill-readme:start--->
 
