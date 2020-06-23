@@ -1,14 +1,20 @@
 # `atomist/git-chatops-skill`
+# GitHub Slash Commands
 
 <!---atomist-skill-readme:start--->
 
-Run commands from git commit messages.
+Run slash commands from commit messages and comments.
 
 # What it's useful for
 
-When you know that you want to trigger a command after Push, embed the command in a Commit message and just push.
+When you know that you want to trigger a command when committing code or commenting on a pull request or issue, just include the slash command.
 
-For example, if you'd like to create a Pull Request after a successful Push, include a command in your Commit Message:
+* Create a pull request directly from a commit message, no separate action needed to create the PR
+* Comment on an open pull request from a commit message
+* Add labels to an issue or pull request when commenting
+* Notify a Slack channel or user when committing or commenting
+
+For example, if you'd like to create a pull request after a successful Push, include a command in your commit message:
 
 ```
 17:56 $ git commit -m "$(cat <<-END
@@ -32,10 +38,9 @@ We recommend connecting the **Slack** integration.
 
 # How to configure
 
-You can enable this skill without configuring any target versions.  In this mode, the skill will collect
-data about your library versions, but will take no action.  Simply select the set of
-repositories that should be scanned.
- 
+To make the slash commands available in a repository, it must be enabled below. We recommend enabling this skill for
+all repositories.
+
 1. **Determine repository scope**
 
     ![Repository filter](docs/images/repo-filter.png)
@@ -46,53 +51,53 @@ repositories that should be scanned.
     organization(s) and repositories.
     
 
-## How to use Update Clojure Tools Dependencies
+## How to use
 
-1.  **Create PRs from a Commit message** 
+1.  **Create a pull request from a commit message** 
 
-    When you push a Commit to a branch, and you're ready to raise a PR, add a message to raise that PR right in your
-    Commit message.  You can include this anywhere in the message:
+    When you push a commit to a branch, and you're ready to raise a pull request, add a message to raise that pull request right in your
+    commit message.  You can include this anywhere in the message:
     
     ```
     /pr --title 'any title surrounded by quotes' --base target-branch-ref
     ```
     
-2.  **Add a Comment to an open PR**
+2.  **Add a comment to an open pull request**
 
-    When you check in to a branch with an open Pull Request, you can use commit messages to add additional 
-    comments to that Pull Request. 
+    When you push to a branch with an open pull request, you can use commit messages to add additional 
+    comments to that pull request. 
 
     ```
     /pr --base master --comment
     ```
     
-    The rest of the commit message will be transcribed into the PR comment body.
+    The rest of the commit message will be transcribed into the pull request comment body.
 
-3.  **Label Issues from Comments**
+3.  **Label issues and pull requests froma a comment**
 
-    When commenting on an issue, you can add labels to that issue by commenting directly in the Issue:
+    When commenting on an issue, you can add labels to that issue by commenting directly in the issue:
     
     ```
     /label label1,label2
     ```
     
-    You can also remove labels from an Issue:
+    You can also remove labels from an issue:
     
     ```
     /label --rm label1
     ```
 
-4.  **CC a Slack channel or User**
+4.  **Notify a Slack channel or user**
 
-    This command works with our Slack integration.
+    This command works with our Slack integration. Add these slash commands in a commit message
+    or in a comment. A link to the Commit, or to the Comment,
+    will be sent to the Channel or User.  Slack channels must be prefixed by `#`, and Slack users
+    must be prefixed by `@`.
     
     ```
     /cc #<slack-channel>
     /cc @<slack-user>
     ```
-    
-    The above commands can be added to either Comments, or Commit messages.  A link to the Commit, or to the Comment,
-    will be sent to the Channel or User.  Slack channels must be prefixed by `#`, and Slack users must be prefixed by `@`.
 
 To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/git-chatops-skill/issues). 
 See the [code](https://github.com/atomist-skills/git-chatops-skill) for the skill.
