@@ -15,7 +15,7 @@
  :name "github-slash-commands-skill",
  :author "Atomist",
  :iconUrl
- "https://cdn3.iconfinder.com/data/icons/chat-bot-emoji-blue-filled-color/300/14134081Untitled-3-512.png",
+ "https://images.atomist.com/skills/chatbot.png",
  :runtime
  {:memory 512,
   :timeout 60,
