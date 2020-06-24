@@ -14,14 +14,14 @@
  :displayName "GitHub Slash Commands",
  :name "github-slash-commands-skill",
  :author "Atomist",
- :iconUrl
- "https://images.atomist.com/skills/chatbot.png",
+ :iconUrl "https://images.atomist.com/skills/chatbot.png",
  :runtime
  {:memory 512,
   :timeout 60,
   :entry_point "eventhandler",
   :name "nodejs10"},
- :homepageUrl "https://github.com/atomist-skills/github-slash-commands-skill",
+ :homepageUrl
+ "https://github.com/atomist-skills/github-slash-commands-skill",
  :parameters
  [{:repoFilter
    {:description "The set of Repositories.",
