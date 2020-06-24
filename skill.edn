@@ -1,5 +1,5 @@
 {:description "Run commands from Commit messages and Issue comments",
- :license "unknown",
+ :license "Apache-2.0",
  :resourceProviders
  [{:name "github",
    :description "GitHub",
