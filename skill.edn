@@ -1,7 +1,6 @@
-{:description "Run commands from your commit messages and issue comments",
+{:description
+ "Run commands from your commit messages and issue comments",
  :license "Apache-2.0",
- :categories ["DEVEX" "CHAT"]
- :technologies []
  :resourceProviders
  [{:name "github",
    :description "GitHub",
@@ -16,6 +15,7 @@
  :displayName "GitHub Slash Commands",
  :name "github-slash-commands-skill",
  :author "Atomist",
+ :categories ["DEVEX" "CHAT"],
  :iconUrl "https://images.atomist.com/skills/chatbot.png",
  :runtime
  {:memory 512,
@@ -31,6 +31,7 @@
     :name "scope",
     :required false}}],
  :namespace "atomist",
+ :technologies [],
  :artifacts
  {:gcf
   [{:name "package-cljs-skill",
