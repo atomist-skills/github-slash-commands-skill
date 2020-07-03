@@ -1,5 +1,7 @@
 {:description "Run commands from Commit messages and Issue comments",
  :license "Apache-2.0",
+ :categories ["DEVEX" "CHAT"]
+ :technologies []
  :resourceProviders
  [{:name "github",
    :description "GitHub",

@@ -1,6 +1,7 @@
 .cpcache
 .shadow-cljs
 index.js
+tests.js
 node_modules
 .idea
 *.iml
