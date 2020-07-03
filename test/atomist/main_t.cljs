@@ -27,11 +27,11 @@
                                   (api/status))]
     (async
      done
-      (go
-        (<! (promise/from-promise
-             (api/make-request event send-response-callback request-handler-chain)))
-        (log/info "okay done now")
-        (done)))))
+     (go
+       (<! (promise/from-promise
+            (api/make-request event send-response-callback request-handler-chain)))
+       (log/info "okay done now")
+       (done)))))
 
 (deftest wish-test
   (let [r {:body {:data {:GitHubAppInstallation [{:token {:secret "github-token-secret"}}]}}}
@@ -49,36 +49,36 @@
         callback (fn [& args] (new js/Promise (fn [accept _] (accept true))))]
     (async
      done
-      (go (<! (promise/from-promise
-               (api/make-request event callback
-                                 (-> (api/finished)
-                                     (main/run-commands)
-                                     (main/validate-commands)
-                                     (main/add-commands)
-                                     (main/check-push-or-comment-for-intents)
-                                     (api/add-skill-config)
-                                     (api/extract-github-token)
-                                     (api/create-ref-from-event)
-                                     (api/log-event)
-                                     (api/status :send-status (fn [{{:keys [errors status]} :status :as request}]
-                                                                (cond
-                                                                  (seq errors)
-                                                                  (apply str errors)
-                                                                  (not (nil? status))
-                                                                  (gstring/format "command status %s" status)
-                                                                  :else
-                                                                  (if-let [data-keys (-> request :data keys)]
-                                                                    (gstring/format "processed %s" data-keys)
-                                                                    "check this"))))))))
-        (done)))))
+     (go (<! (promise/from-promise
+              (api/make-request event callback
+                                (-> (api/finished)
+                                    (main/run-commands)
+                                    (main/validate-commands)
+                                    (main/add-commands)
+                                    (main/check-push-or-comment-for-intents)
+                                    (api/add-skill-config)
+                                    (api/extract-github-token)
+                                    (api/create-ref-from-event)
+                                    (api/log-event)
+                                    (api/status :send-status (fn [{{:keys [errors status]} :status :as request}]
+                                                               (cond
+                                                                 (seq errors)
+                                                                 (apply str errors)
+                                                                 (not (nil? status))
+                                                                 (gstring/format "command status %s" status)
+                                                                 :else
+                                                                 (if-let [data-keys (-> request :data keys)]
+                                                                   (gstring/format "processed %s" data-keys)
+                                                                   "check this"))))))))
+         (done)))))
 
 (use-fixtures :once
-              {:before (fn [])
-               :after })
+  {:before (fn [])
+   :after})
 
 (comment
- (set! atomist.graphql-channels/graphql->channel (fn [& args] (go (println "don't call it!!!")
-                                                                {:some-data "whaewt"})))
- (enable-console-print!)
- (run-tests))
+  (set! atomist.graphql-channels/graphql->channel (fn [& args] (go (println "don't call it!!!")
+                                                                   {:some-data "whaewt"})))
+  (enable-console-print!)
+  (run-tests))
 
