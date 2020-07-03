@@ -1,4 +1,4 @@
-{:description "Run commands from Commit messages and Issue comments",
+{:description "Run commands from your commit messages and issue comments",
  :license "Apache-2.0",
  :categories ["DEVEX" "CHAT"]
  :technologies []
