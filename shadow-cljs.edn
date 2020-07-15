@@ -5,10 +5,11 @@
    :exports {:handler atomist.main/handler},
    :output-to "index.js"},
   :release
-  {:target :node-library,
-   :output-to "index.js",
-   :exports {:handler atomist.main/handler},
-   :compiler-options {:optimizations :advanced}},
+  {:target :node-script
+   :main atomist.main/handler
+   :output-to "index.js"
+   :exports {:handler atomist.main/handler}
+   :compiler-options {:optimizations :simple}},
   :test
   {:target :node-test,
    :output-to "tests.js", 

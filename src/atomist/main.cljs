@@ -11,7 +11,9 @@
             [atomist.commands.cc]
             [atomist.commands.label]
             [atomist.commands.pr]
-            [atomist.commands.wish])
+            [atomist.commands.wish]
+            [atomist.commands.gh]
+            [atomist.container :as container])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn run-commands [handler]
@@ -86,11 +88,8 @@
           (<! (api/finish request :success "skipping - no intents" :visibility :hidden)))))))
 
 (defn ^:export handler
-  [data sendreponse]
-  (api/make-request
-   data
-   sendreponse
-   (-> (api/finished)
+  []
+  ((-> (api/finished)
        (run-commands)
        (validate-commands)
        (add-commands)
@@ -109,4 +108,5 @@
                                     :else
                                     (if-let [data-keys (-> request :data keys)]
                                       (gstring/format "processed %s" data-keys)
-                                      "check this")))))))
+                                      "check this"))))
+       (container/mw-make-container-request)) {}))

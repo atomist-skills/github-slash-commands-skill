@@ -33,9 +33,7 @@
  :namespace "atomist",
  :technologies [],
  :artifacts
- {:gcf
-  [{:name "package-cljs-skill",
-    :entryPoint "eventhandler",
-    :memory 512, 
-    :runtime "nodejs10", 
-    :timeout 60}]}}
+ {:docker
+  [{:name "github-slash-commands",
+    :image
+    "gcr.io/atomist-container-skills/github-slash-commands:0.1.0"}]}}
