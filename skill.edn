@@ -15,7 +15,7 @@
  :displayName "GitHub Slash Commands",
  :name "github-slash-commands-skill",
  :author "Atomist",
- :categories ["DEVEX" "CHAT"],
+ :categories ["CODE_REVIEW" "CHAT"],
  :iconUrl "https://images.atomist.com/skills/chatbot.png",
  :runtime
  {:memory 512,
