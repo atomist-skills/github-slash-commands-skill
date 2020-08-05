@@ -9,13 +9,13 @@
     "skill": "npm run build && npm run bundle"
   },
   "dependencies": {
-    "@atomist/api-cljs": "^0.4.54"
+    "@atomist/api-cljs": "^0.4.74"
   },
   "devDependencies": {
     "@atomist/skill-bundler": "^0.1.13",
-    "shadow-cljs": "^2.8.69",
+    "shadow-cljs": "^2.10.19",
     "source-map-support": "0.5.9",
-    "ws": "^7.3.0"
+    "ws": "^7.3.1"
   },
   "main": "node_modules/@atomist/api-cljs/app.js"
 }
