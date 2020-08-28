@@ -44,6 +44,6 @@
                                                      {:type "section"
                                                       :text {:type "mrkdwn"
                                                              :text (gstring/format "```%s```" (apply str (take 400 message)))}}])))]
-            (:status response))
+            response)
           {:errors "argument to cc must begin with either a '@' or a '#'"})
         {:errors errors}))))

@@ -11,7 +11,7 @@
             [atomist.commands.cc]
             [atomist.commands.label]
             [atomist.commands.pr]
-            [atomist.commands.wish])
+            [atomist.cljs-log :as log])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn run-commands [handler]
@@ -21,7 +21,10 @@
                                      (commands/run (assoc request :command command)))
                                    (async/merge)
                                    (async/reduce conj [])))]
-        (<! (handler (assoc request :return return-values)))))))
+        (log/info "return-values " return-values)
+        (<! (handler (assoc request :status {:command-count (count return-values)
+                                             :errors (mapcat :errors return-values)
+                                             :statuses (mapcat :status return-values)})))))))
 
 (defn validate-command-spec [d]
   (when (not (s/valid? :command/spec d))
@@ -59,7 +62,10 @@
                                          {:push/sha sha})))))))))
 
 (defn atomist-commands [s]
-  (re-seq (re-pattern (gstring/format "(?m)/(pr|cc|label|wish) (.*)?" (or keyword "atomist"))) s))
+  (re-seq (re-pattern (gstring/format "(?m)/(%s) (.*)?"
+                                      (->> (interpose "|" commands/command-prefixes)
+                                           (apply str))
+                                      (or keyword "atomist"))) s))
 
 (defn push-mode [_ {[{:keys [branch repo] {:keys [message sha] {:keys [login]} :author} :after}] :Push}]
   (->> (for [[_ command args] (atomist-commands message)]
@@ -100,13 +106,8 @@
        (api/create-ref-from-event)
        (api/add-slack-source-to-event)
        (api/log-event)
-       (api/status :send-status (fn [{{:keys [errors status]} :status :as request}]
-                                  (cond
-                                    (seq errors)
-                                    (apply str errors)
-                                    (not (nil? status))
-                                    (gstring/format "command status %s" status)
-                                    :else
-                                    (if-let [data-keys (-> request :data keys)]
-                                      (gstring/format "processed %s" data-keys)
-                                      "check this")))))))
+       (api/status :send-status (fn [{{:keys [command-count errors statuses]} :status}]
+                                  (log/info "ran %d commands" command-count)
+                                  (if (seq errors)
+                                    (->> (interpose "," errors) (apply str))
+                                    (gstring/format "command statuses %s" (->> (interpose "," statuses) (apply str)))))))))

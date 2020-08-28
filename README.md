@@ -13,17 +13,20 @@ When you know that you want to trigger a command when committing code or comment
 -   Add labels to an issue or pull request when commenting
 -   Notify a Slack channel or user when committing or commenting
 
-For example, if you'd like to create a pull request after a successful Push, include a command in your commit message:
+For example, if you'd like to create a pull request after a successful Push, include a command inside of your commit message:
 
 ```
-17:56 $ git commit -m "$(cat <<-END
+$ git commit -m "$(cat <<-END
 > this is my commit message
 > but I can also add a command
 >
-> /pr --title 'my title' --base master
+> /pr --title 'my title' --base master --draft
 > END
 > )"
 ```
+
+When this commit is pushed, the skill will create a pull request for this branch.  In this example, the pull request
+is created in draft mode.  This indicates to users that the pull request is not yet ready for review.
 
 # Before you get started
 
@@ -51,46 +54,107 @@ all repositories.
 
 ## How to use
 
+### Add commands to Commit messages
+
 1.  **Create a pull request from a commit message**
 
     When you push a commit to a branch, and you're ready to raise a pull request, add a message to raise that pull request right in your
     commit message. You can include this anywhere in the message:
 
     ```
-    /pr --title 'any title surrounded by quotes' --base target-branch-ref
+    /pr --title 'any title surrounded by quotes' --base target-branch-ref --draft
+    ```
+    
+    This is great when you are committing a new branch and you know that you want an open pull request.  The new 
+    ability to place the pull request in draft mode can be useful, but this is optional.
+    
+2.  **Notify a User or Channel in Slack**
+
+    Highlight this Commit for a User or a Slack channel, by mentioning them in the body of the commit message.  
+    This command requires that the Slack integration is enabled for the team.
+
+    ```
+    Fixes Issue X
+    /cc #channel
+    ```
+    
+    Use the `@user` syntax to notify individual users.
+    
+    ```
+    Fixes Issue Y
+    /cc @alyssa
+    ```
+    
+3.  **Create an Issue**
+
+    ```
+    Adding Feature X
+    /issue create --title "TODO: I need some help documenting this" --assignee alyssa --assignee john --label documentation 
+    ```
+    
+4.  **Close a Pull Request**
+
+    When committing to a branch with an open pull request, you can close any open pull requests associated with this branch:
+    
+    ```
+    /pr close
     ```
 
-2.  **Add a comment to an open pull request**
+    This can be useful when you've realized that the branch needs more work.  
+    We are planning on adding a `/pr draft` to take the pull request back to draft mode, but we can't find the api!
+    
+5.  **Mark a draft Pull Request as Ready for review**
 
-    When you push to a branch with an open pull request, you can use commit messages to add additional
-    comments to that pull request.
-
+    Mark an open PR on this branch as ready for review with:
+    
     ```
-    /pr --base master --comment
+    /pr ready
     ```
+    
+    This is convenient when you've got a draft pull request open 
+    and you're making one more commit before marking it as being ready for review. 
+    
+All of the above command can be combined.  So a Commit message could create a pull request, and notify
+Slack users in the same commit message.
 
-    The rest of the commit message will be transcribed into the pull request comment body.
+```
+Adding feature X
 
-3.  **Label issues and pull requests froma a comment**
+This is a backwards compatible change to the segments api
+/pr --title 'feature X' --base main --draft --label api --label segment
+/cc #segment-team
+```
+        
+### Add commands to Issue or Pull Request Comments
 
-    When commenting on an issue, you can add labels to that issue by commenting directly in the issue:
+We can also add commands to the comments of any issue, or pull request.
+
+1.  **Add or remove labels**
+
+    When commenting on an issue, or on a pull request, you can add labels by adding commands to the comment:
 
     ```
     /label label1,label2
     ```
 
-    You can also remove labels from an issue:
+    You can also remove labels:
 
     ```
     /label --rm label1
     ```
+    
+2.  **Make a draft Pull Request ready**
 
-4.  **Notify a Slack channel or user**
+    Mark the current pull request as ready for review by including the command:
+    
+    ```
+    /pr ready
+    ```
 
-    This command works with our Slack integration. Add these slash commands in a commit message
-    or in a comment. A link to the Commit, or to the Comment,
-    will be sent to the Channel or User. Slack channels must be prefixed by `#`, and Slack users
-    must be prefixed by `@`.
+3.  **Notify a Slack channel or user**
+
+    Similar to above, you can highlight Issues for users or channels.  This only works if our Slack integration
+    has been enabled. 
 
     ```
     /cc #<slack-channel>

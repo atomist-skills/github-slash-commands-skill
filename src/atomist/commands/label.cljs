@@ -19,45 +19,56 @@
                                        :description "added by atomist/git-chatops-skill"}))
         response))))
 
+;; /label --rm label1,label2
+;; /label labe1,label2
+;; these only make sense from Issue/PR comments
 (defmethod run "label" [{{:command/keys [args token repo]
                           :label/keys [number default-color] :or {default-color "f29513"}} :command}]
   (go
-    (let [{{:keys [rm]} :options just-args :arguments}
-          (shell/raw-message->options {:raw_message args}
-                                      [[nil "--rm"]])
-          request {:ref {:owner (:owner repo) :repo (:name repo)}
-                   :number number
-                   :token token}
-          labels (->> just-args
-                      (mapcat #(string/split % #","))
-                      (map string/trim)
-                      (map (fn [label] (if (or (< (count label) 3)
-                                               (re-find #"[\.\#]" label))
-                                         :error
-                                         label)))
-                      (into []))]
-      (log/info "labels to create:  " (pr-str labels))
-      (if (some #(= :error %) labels)
-        {:errors [(gstring/format "invalid label names %s" labels)]}
-        (if rm
-          (let [response (<! (->> (for [label labels] (github/rm-label request label))
-                                  (async/merge)
-                                  (async/reduce conj [])))]
-            (log/debugf "rm-labels: %s" (->> response
-                                             (map :status)
-                                             (interpose ",")
-                                             (apply str))))
-          (do
-            (let [response (<! (->> (for [label labels] (ensure-label request label default-color))
+    (if (not number)
+      {:errors ["/label command only works from a PR/Issue Comment"]}
+      (let [{{:keys [rm]} :options just-args :arguments}
+            (shell/raw-message->options {:raw_message args}
+                                        [[nil "--rm"]])
+            request {:ref {:owner (:owner repo) :repo (:name repo)}
+                     :number number
+                     :token token}
+            labels (->> just-args
+                        (mapcat #(string/split % #","))
+                        (map string/trim)
+                        (map (fn [label] (if (or (< (count label) 3)
+                                                 (re-find #"[\.\#]" label))
+                                           :error
+                                           label)))
+                        (into []))]
+        (log/info "labels to create:  " (pr-str labels))
+        (if (some #(= :error %) labels)
+          {:errors [(gstring/format "invalid label names %s" labels)]}
+          (if rm
+            (let [response (<! (->> (for [label labels]
+                                      (github/rm-label request label))
                                     (async/merge)
-                                    (async/reduce conj [])))]
-              (log/debugf "ensure-labels:  %s" (->> response
-                                                    (map :status)
-                                                    (interpose ",")
-                                                    (apply str))))
-            (log/debugf "put-labels: %s" (:status (<! (github/put-label
-                                                       (assoc request
-                                                              :labels labels)))))))))))
+                                    (async/reduce conj [])))
+                  status (->> response
+                              (map :status)
+                              (interpose ",")
+                              (apply str))]
+              (log/debugf "rm-labels: %s" status)
+              {:status status})
+            (do
+              (let [response (<! (->> (for [label labels] (ensure-label request label default-color))
+                                      (async/merge)
+                                      (async/reduce conj [])))
+                    ensure-status (->> response
+                                       (map :status)
+                                       (interpose ",")
+                                       (apply str))]
+                (log/debugf "ensure-labels:  %s" ensure-status))
+              (let [status (:status (<! (github/put-label
+                                         (assoc request
+                                                :labels labels))))]
+                (log/debugf "put-labels: %s" status)
+                {:status status}))))))))
 
 (comment
   (run {:command {:command/command "label"

@@ -1,0 +1,1 @@
+https://api.atomist.com/v2/auth/teams/T095SFFBK/resource-providers/T095SFFBK_1e54dda3-d438-43b3-a5ed-fce0a125ea69/token?state=bot_1f8af4c7-3bd7-4d2d-9a4a-2530a54c21bf&redirect-uri=https://www.atomist.com/success.html

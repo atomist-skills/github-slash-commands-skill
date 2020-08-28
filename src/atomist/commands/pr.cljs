@@ -1,23 +1,183 @@
 (ns atomist.commands.pr
   (:require [atomist.shell :as shell]
             [cljs.core.async :refer [<!]]
-            [atomist.commands :refer [run]]
+            [atomist.commands :refer [run try-user-then-installation]]
             [atomist.cljs-log :as log]
-            [atomist.github :as github])
+            [atomist.github :as github]
+            [atomist.local-runner :as lr]
+            [atomist.api :as api])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defmethod run "pr" [{{:command/keys [args token repo]
-                       :push/keys [branch]} :command}]
+(defmethod run "pr" [{{:command/keys [args token repo login]
+                       :push/keys [branch]
+                       :label/keys [number]} :command :as request}]
   (go
-    (let [{{:keys [title base]} :options errors :errors}
+    (let [{{:keys [title base labels draft]} :options
+           errors :errors
+           just-args :arguments}
           (shell/raw-message->options {:raw_message args}
                                       [[nil "--title TITLE" "Pull Request Title"]
+                                       [nil "--approve" "Approve Pull Request"]
+                                       [nil "--request-changes" "request changes"]
+                                       [nil "--draft"]
                                        [nil "--base BASE" "base branch ref"
-                                        :default "master"]])]
+                                        :default "master"]
+                                       ["-l" "--label LABEL" "add labels"
+                                        :id :labels
+                                        :default []
+                                        :assoc-fn (fn [m k v] (update-in m [k] conj v))]
+                                       ["-r" "--reviewer REVIEWER" "assign reviewers"
+                                        :id :reviewers
+                                        :default []
+                                        :assoc-fn (fn [m k v] (update-in m [k] conj v))]])]
       (if (empty? errors)
-        (let [response (<! (github/post-pr
-                            {:token token :owner (:owner repo) :repo (:name repo)}
-                            title "submitted from git-chatops-skill" branch base []))]
-          (log/info response)
-          (:status response))
+        (let [p {:token token :owner (:owner repo) :repo (:name repo)}]
+          (cond
+
+            ;; create when /pr --title --base and our current commit points at a branch (Commit message only)
+            (and branch base title)
+            (<! (try-user-then-installation
+                 request
+                 login
+                 (fn [_ {:keys [person token]}]
+                   (github/post-pr
+                    {:token token :owner (:owner repo) :repo (:name repo)}
+                    (merge {:title title
+                            :body "submitted from git-chatops-skill"
+                            :head branch
+                            :base base}
+                           (if draft {:draft true}))
+                    labels))))
+
+            ;; close a PR from a comment
+            (and (some #{"close"} just-args) number)
+            (<!
+             (try-user-then-installation
+              request
+              login
+              (fn [_ {:keys [person token]}]
+                (if person
+                  (log/info "using user token")
+                  (log/info "using installation token"))
+                (github/patch-pr-state (assoc p :token token) number "closed"))))
+
+            ;; close a PR from a commit to it's branch
+            (and (some #{"close"} just-args) branch)
+            (<!
+             (try-user-then-installation
+              request
+              login
+              (fn [_ {:keys [person token]}]
+                (if person
+                  (log/info "using user token")
+                  (log/info "using installation token"))
+                (github/close-pr (assoc p :token token) branch))))
+
+            ;; mark a PR READY from a Comment
+            (and (some #{"ready"} just-args) number)
+            (<!
+             (try-user-then-installation
+              request
+              login
+              (fn [_ {:keys [person token]}]
+                (if person
+                  (github/pr-is-ready-by-number (assoc p :token token) number)
+                  (do
+                    (log/warn "can not mark PRs ready with an installation token")
+                    {:errors ["github authorization required for marking PRs ready for review"]})))))
+
+            ;; mark a PR READY from a Commit to it's head branch
+            (and (some #{"ready"} just-args) branch)
+            (<!
+             (try-user-then-installation
+              request
+              login
+              (fn [_ {:keys [person token]}]
+                (if person
+                  (github/pr-is-ready-by-branch (assoc p :token token) branch)
+                  (do
+                    (log/warn "can not mark PRs ready with an installation token")
+                    {:errors ["github authorization required for marking PRs ready for review"]})))))
+
+            ;(and (some #{"draft"} just-args) number)
+            ;(<! (github/patch-pr-draft-state p number true))
+            ;(and (some #{"draft"} just-args) branch)
+            ;(<! (github/draft-pr p branch true))
+
+            ;; TODO can we do anything with reviews?
+
+            :else
+            {:errors ["could not parse arguments to /pr"]}))
+
         {:errors errors}))))
+
+;; create --title --label --reviewer --project --base
+;; close --repo number | branch | url
+;; ready --repo number | branch | url
+;; review --approve --body --comment --request-changes
+
+(comment
+  (lr/set-env :prod-github-auth)
+
+  (enable-console-print!)
+
+  ((api/extract-github-token
+    (fn [request]
+      (go (println (<!
+                    (run
+                     (assoc request :command {:command/command "pr"
+                                              :command/token (:token request)
+                                              :command/args "--title \"my title\" --base master --draft"
+                                              :command/login "slimslenderslacks"
+                                              :command/repo {:owner "slimslender" :name "clj1"}
+                                              :command/message "sample message"
+                                              :push/branch "slimslenderslacks-patch-1"})))))))
+   {:team {:id "AEIB5886C"}
+    :ref {:owner "slimslender"}
+    :secrets [{:uri "atomist://api-key" :value (lr/token)}]})
+
+  ((api/extract-github-token
+    (fn [request]
+      (go (println (<!
+                    (run
+                     (assoc request :command {:command/command "pr"
+                                              :command/token (:token request)
+                                              :command/args "close"
+                                              :command/login "slimslenderslacks"
+                                              :command/repo {:owner "slimslender" :name "clj1"}
+                                              :command/message "sample message"
+                                              :push/branch "slimslenderslacks-patch-1"})))))))
+   {:team {:id "AEIB5886C"}
+    :ref {:owner "slimslender"}
+    :secrets [{:uri "atomist://api-key" :value (lr/token)}]})
+
+ ;; needs user token
+  ((api/extract-github-user-token-by-github-login
+    (fn [request]
+      (go (println (<!
+                    (run
+                     (assoc request :command {:command/command "pr"
+                                              :command/token (:token request)
+                                              :command/args "ready"
+                                              :command/login "slimslenderslacks"
+                                              :command/repo {:owner "slimslender" :name "clj1"}
+                                              :command/message "sample message"
+                                              :push/branch "slimslenderslacks-patch-1"})))))))
+   {:team {:id "AEIB5886C"}
+    :ref {:owner "slimslender"}
+    :secrets [{:uri "atomist://api-key" :value (lr/token)}]})
+
+  ((api/extract-github-token
+    (fn [request]
+      (go (println (<!
+                    (run
+                     (assoc request :command {:command/command "pr"
+                                              :command/token (:token request)
+                                              :command/args "ready"
+                                              :command/login "slimslenderslacks"
+                                              :command/repo {:owner "slimslender" :name "clj1"}
+                                              :command/message "sample message"
+                                              :label/number 107})))))))
+   {:team {:id "AEIB5886C"}
+    :ref {:owner "slimslender"}
+    :secrets [{:uri "atomist://api-key" :value (lr/token)}]}))
