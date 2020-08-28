@@ -23,8 +23,8 @@
                                    (async/reduce conj [])))]
         (log/info "return-values " return-values)
         (<! (handler (assoc request :status {:command-count (count return-values)
-                                             :errors (mapcat :errors return-values)
-                                             :statuses (mapcat :status return-values)})))))))
+                                             :errors (map :error return-values)
+                                             :statuses (map :status return-values)})))))))
 
 (defn validate-command-spec [d]
   (when (not (s/valid? :command/spec d))
@@ -107,7 +107,9 @@
        (api/add-slack-source-to-event)
        (api/log-event)
        (api/status :send-status (fn [{{:keys [command-count errors statuses]} :status}]
-                                  (log/info "ran %d commands" command-count)
+                                  (log/infof "statuses are " statuses)
+                                  (log/infof "errors are " errors)
+                                  (log/infof "ran %d commands" command-count)
                                   (if (seq errors)
                                     (->> (interpose "," errors) (apply str))
                                     (gstring/format "command statuses %s" (->> (interpose "," statuses) (apply str)))))))))
