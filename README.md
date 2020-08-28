@@ -25,8 +25,8 @@ $ git commit -m "$(cat <<-END
 > )"
 ```
 
-When this commit is pushed, the skill will create a pull request for this branch.  In this example, the pull request
-is created in draft mode.  This indicates to users that the pull request is not yet ready for review.
+When this commit is pushed, the skill will create a pull request for this branch. In this example, the pull request
+is created in draft mode. This indicates to users that the pull request is not yet ready for review.
 
 # Before you get started
 
@@ -64,10 +64,10 @@ all repositories.
     ```
     /pr --title 'any title surrounded by quotes' --base target-branch-ref --draft
     ```
-    
-    This is great when you are committing a new branch and you know that you want an open pull request.  The new 
+
+    This is great when you are committing a new branch and you know that you want an open pull request. The new
     ability to place the pull request in draft mode can be useful, but this is optional.
-    
+
 2.  **Notify a User or Channel in Slack**
 
     Highlight this Commit for a User or a Slack channel, by mentioning them in the body of the commit message.  
@@ -77,44 +77,44 @@ all repositories.
     Fixes Issue X
     /cc #channel
     ```
-    
+
     Use the `@user` syntax to notify individual users.
-    
+
     ```
     Fixes Issue Y
     /cc @alyssa
     ```
-    
+
 3.  **Create an Issue**
 
     ```
     Adding Feature X
-    /issue create --title "TODO: I need some help documenting this" --assignee alyssa --assignee john --label documentation 
+    /issue create --title "TODO: I need some help documenting this" --assignee alyssa --assignee john --label documentation
     ```
-    
+
 4.  **Close a Pull Request**
 
     When committing to a branch with an open pull request, you can close any open pull requests associated with this branch:
-    
+
     ```
     /pr close
     ```
 
     This can be useful when you've realized that the branch needs more work.  
     We are planning on adding a `/pr draft` to take the pull request back to draft mode, but we can't find the api!
-    
+
 5.  **Mark a draft Pull Request as Ready for review**
 
     Mark an open PR on this branch as ready for review with:
-    
+
     ```
     /pr ready
     ```
-    
-    This is convenient when you've got a draft pull request open 
-    and you're making one more commit before marking it as being ready for review. 
-    
-All of the above command can be combined.  So a Commit message could create a pull request, and notify
+
+    This is convenient when you've got a draft pull request open
+    and you're making one more commit before marking it as being ready for review.
+
+All of the above command can be combined. So a Commit message could create a pull request, and notify
 Slack users in the same commit message.
 
 ```
@@ -124,7 +124,7 @@ This is a backwards compatible change to the segments api
 /pr --title 'feature X' --base main --draft --label api --label segment
 /cc #segment-team
 ```
-        
+
 ### Add commands to Issue or Pull Request Comments
 
 We can also add commands to the comments of any issue, or pull request.
@@ -142,19 +142,19 @@ We can also add commands to the comments of any issue, or pull request.
     ```
     /label --rm label1
     ```
-    
+
 2.  **Make a draft Pull Request ready**
 
     Mark the current pull request as ready for review by including the command:
-    
+
     ```
     /pr ready
     ```
 
 3.  **Notify a Slack channel or user**
 
-    Similar to above, you can highlight Issues for users or channels.  This only works if our Slack integration
-    has been enabled. 
+    Similar to above, you can highlight Issues for users or channels. This only works if our Slack integration
+    has been enabled.
 
     ```
     /cc #<slack-channel>
