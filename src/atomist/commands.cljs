@@ -1,7 +1,10 @@
 (ns atomist.commands
   (:require [cljs.spec.alpha :as s]
             [atomist.github :as github]
-            [atomist.api :as api]))
+            [atomist.api :as api]
+            [atomist.cljs-log :as log]
+            [goog.string :as gstring]
+            [goog.string.format]))
 
 (def command-prefixes #{"pr" "label" "cc" "issue"})
 
@@ -10,12 +13,21 @@
 (defn try-user-then-installation [request login h]
   (let [installation-token (:token request)]
     ((-> (fn [{:keys [token person]}]
+           (if person
+             (log/info "using user token")
+             (log/info "using installation token"))
            (if (and token person)
              (h request {:person person
                          :token token})
              (h request {:token installation-token})))
          (api/extract-github-user-token-by-github-login))
      (assoc request :login login))))
+
+(defn commit-error [{{:command/keys [token repo command] sha :push/sha} :command} errors]
+  (let [comment-body (gstring/format "unable to run `%s`:\n\n%s" command (->> (interpose "\n" errors)
+                                                                              (apply str)))]
+    (log/info "set error on " sha)
+    (github/post-commit-comment {:owner (:owner repo) :repo (:name repo) :token token} sha comment-body)))
 
 ;; will only have the sha on Commit messages
 (s/def :push/sha string?)

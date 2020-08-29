@@ -11,6 +11,7 @@
             [atomist.commands.cc]
             [atomist.commands.label]
             [atomist.commands.pr]
+            [atomist.commands.issue]
             [atomist.cljs-log :as log])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -23,8 +24,12 @@
                                    (async/reduce conj [])))]
         (log/info "return-values " return-values)
         (<! (handler (assoc request :status {:command-count (count return-values)
-                                             :errors (map :error return-values)
-                                             :statuses (map :status return-values)})))))))
+                                             :errors (->> (mapcat :errors return-values)
+                                                          (filter identity)
+                                                          (into []))
+                                             :statuses (->> (map :status return-values)
+                                                            (filter identity)
+                                                            (into []))})))))))
 
 (defn validate-command-spec [d]
   (when (not (s/valid? :command/spec d))
@@ -106,10 +111,13 @@
        (api/create-ref-from-event)
        (api/add-slack-source-to-event)
        (api/log-event)
-       (api/status :send-status (fn [{{:keys [command-count errors statuses]} :status}]
-                                  (log/infof "statuses are " statuses)
-                                  (log/infof "errors are " errors)
+       (api/status :send-status (fn [{{:keys [command-count errors statuses]} :status commands :commands}]
+                                  (log/infof "statuses are %s" statuses)
+                                  (log/infof "errors are %s" errors)
                                   (log/infof "ran %d commands" command-count)
-                                  (if (seq errors)
-                                    (->> (interpose "," errors) (apply str))
-                                    (gstring/format "command statuses %s" (->> (interpose "," statuses) (apply str)))))))))
+                                  (cond (seq errors)
+                                        (->> (interpose "," errors) (apply str))
+                                        (seq statuses)
+                                        (gstring/format "command statuses %s" (->> (interpose "," statuses) (apply str)))
+                                        :else
+                                        (gstring/format "ran %s" (->> commands (map :command/command) (into [])))))))))
