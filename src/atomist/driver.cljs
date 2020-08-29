@@ -25,6 +25,8 @@
   (on-push "something\n\n/pr ready\n" :branch "slimtest")
  ;; close
   (on-push "something\n\n/pr close\n" :branch "slimtest")
+ ;; multiple steps
+ (on-push "something\n/pr --title \"my multi step\" --base master --draft --label segment --label api\n/cc #segment-team" :branch "slimtest")
 
   (on-push "/issue create --title \"new issue\" --label test1 --assignee slimslenderslacks"))
 

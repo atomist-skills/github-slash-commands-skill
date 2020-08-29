@@ -2,31 +2,28 @@
 
 <!---atomist-skill-readme:start--->
 
-Run slash commands from commit messages and comments.
+Create PRs, Issues, and send Slack notifications directly from your commit messages, and issue comments.
 
 # What it's useful for
 
-When you know that you want to trigger a command when committing code or commenting on a pull request or issue, just include the slash command.
+Triggering commands directly from commit messages, or issue comments, can be very convenient.  For example:
 
--   Create a pull request directly from a commit message, no separate action needed to create the PR
--   Comment on an open pull request from a commit message
--   Add labels to an issue or pull request when commenting
--   Notify a Slack channel or user when committing or commenting
+-   create a draft pull request directly from your commit message to the new branch.
+-   Automatically add labels to an issue or pull request based on comments
+-   Request specific users or channels in Slack to be notified about your change
 
-For example, if you'd like to create a pull request after a successful Push, include a command inside of your commit message:
+For example, when you write your commit message, you can include a request to create a draft PR:
 
 ```
 $ git commit -m "$(cat <<-END
-> this is my commit message
-> but I can also add a command
+> This change adds feature X 
 >
 > /pr --title 'my title' --base master --draft
 > END
 > )"
 ```
 
-When this commit is pushed, the skill will create a pull request for this branch. In this example, the pull request
-is created in draft mode. This indicates to users that the pull request is not yet ready for review.
+When the branch ref for this Commit is pushed, the skill will create this PR on your behalf.
 
 # Before you get started
 
@@ -47,10 +44,10 @@ all repositories.
 
     ![Repository filter](docs/images/repo-filter.png)
 
-    By default, this skill will be enabled for all repositories in all organizations you have connected.
+    By default, this skill will be enabled for Issues, and Commits on all repositories that you have connected.
 
-    To restrict the organizations or specific repositories on which the skill will run, you can explicitly choose
-    organization(s) and repositories.
+    To restrict the organizations or repositories on which the skill will run, restrict the skill to a subset
+    of your repositories.
 
 ## How to use
 
@@ -58,16 +55,16 @@ all repositories.
 
 1.  **Create a pull request from a commit message**
 
-    When you push a commit to a branch, and you're ready to raise a pull request, add a message to raise that pull request right in your
-    commit message. You can include this anywhere in the message:
+    When you push a commit to a branch, and you're ready to raise a pull request, add the following command any 
+    where in your commit message.
 
     ```
     /pr --title 'any title surrounded by quotes' --base target-branch-ref --draft
     ```
 
-    This is great when you are committing a new branch and you know that you want an open pull request. The new
-    ability to place the pull request in draft mode can be useful, but this is optional.
-
+    This is useful when you are committing a new branch.  You can push and create the pull request in one step.
+    Note that this requests the pull request creation in draft mode so it is not yet ready to be reviewed. 
+    
 2.  **Notify a User or Channel in Slack**
 
     Highlight this Commit for a User or a Slack channel, by mentioning them in the body of the commit message.  
@@ -99,9 +96,16 @@ all repositories.
     ```
     /pr close
     ```
+    
+    or just the one that targets a specific branch using:
+    
+    ```
+    /pr close --base master
+    ```
 
-    This can be useful when you've realized that the branch needs more work.  
-    We are planning on adding a `/pr draft` to take the pull request back to draft mode, but we can't find the api!
+    This can be useful when you've realized that the branch needs more work and you'd like to retract the pull request.  
+    We are planning on adding a `/pr draft` to move the pull request back to draft mode.  Unfortunately, github does not
+    seem to provide api access to this feature yet.
 
 5.  **Mark a draft Pull Request as Ready for review**
 
@@ -110,9 +114,9 @@ all repositories.
     ```
     /pr ready
     ```
-
-    This is convenient when you've got a draft pull request open
-    and you're making one more commit before marking it as being ready for review.
+    
+    This is great complement to the ability to create pull requests in draft mode.  Create draft pull requests early, 
+    and then mark them ready to review later.
 
 All of the above command can be combined. So a Commit message could create a pull request, and notify
 Slack users in the same commit message.
@@ -127,7 +131,8 @@ This is a backwards compatible change to the segments api
 
 ### Add commands to Issue or Pull Request Comments
 
-We can also add commands to the comments of any issue, or pull request.
+We can also add commands to the comments of any issue, or pull request.  The commands that make the most
+sense in the context of an issue comment are listed here:
 
 1.  **Add or remove labels**
 
