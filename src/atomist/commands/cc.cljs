@@ -43,7 +43,19 @@
                                                                                    login url s)}}
                                                      {:type "section"
                                                       :text {:type "mrkdwn"
-                                                             :text (gstring/format "```%s```" (apply str (take 400 message)))}}])))]
+                                                             :text (gstring/format "```%s```" (apply str (take 400 message)))}}
+                                                     {:type "divider"}
+                                                     {:type "context"
+                                                      :elements [{:type "image"
+                                                                  :image_url "https://images.atomist.com/logo/atomist-black-mark-xsmall.png"
+                                                                  :alt_text "Atomist icon"}
+                                                                 {:type "mrkdwn"
+                                                                  :text (gstring/format "%s/%s \u00B7 <https://go.atomist.com/%s/manage/skills/configure/%s/%s|Configure>"
+                                                                                        (-> request :skill :namespace)
+                                                                                        (-> request :skill :name)
+                                                                                        (-> request :team :id)
+                                                                                        (-> request :skill :id)
+                                                                                        (-> request :configuration :name))}]}])))]
             response)
           {:errors "argument to cc must begin with either a '@' or a '#'"})
         {:errors errors}))))
