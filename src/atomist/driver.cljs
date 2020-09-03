@@ -12,7 +12,7 @@
       (lr/call-event-handler main/handler)))
 
 (defn on-comment [s & {:keys [number]}]
-  (-> (lr/fake-comment-on-issue "AEIB5886C" "slimslender" "clj1" 2 "")
+  (-> (lr/fake-comment-on-issue "AEIB5886C" "slimslender" "clj1" number s)
       (lr/add-configuration {:name "default" :parameters []})
       (lr/call-event-handler main/handler)))
 
@@ -33,6 +33,7 @@
 (comment
   (on-push "/cc @slimslenderslacks" :sha "803c44e10439f6fb8a2e4ae7c4c9d9cf64646217"))
 
-(comment)
-
-
+(comment
+ (on-comment "okay\n\n/issue lock" :number 136)
+ (on-comment "okay\n\n/issue lock spam" :number 136)
+ (on-comment "okay\n\n/issue unlock" :number 136))

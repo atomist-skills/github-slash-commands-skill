@@ -155,8 +155,22 @@ sense in the context of an issue comment are listed here:
     ```
     /pr ready
     ```
+    
+3.  **Lock or unlock an Issue**
 
-3.  **Notify a Slack channel or user**
+    Mark the current issue as locked
+    
+    ```
+    /issue lock 
+    ```
+    
+    or unlock it
+    
+    ```
+    /issue unlock
+    ```
+
+4.  **Notify a Slack channel or user**
 
     Similar to above, you can highlight Issues for users or channels. This only works if our Slack integration
     has been enabled.
