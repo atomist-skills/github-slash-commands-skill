@@ -161,7 +161,7 @@ sense in the context of an issue comment are listed here:
     Mark the current issue as locked
     
     ```
-    /issue lock 
+    /issue lock [off topic|too heated|resolved|spam]
     ```
     
     or unlock it
