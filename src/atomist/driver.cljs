@@ -34,6 +34,6 @@
   (on-push "/cc @slimslenderslacks" :sha "803c44e10439f6fb8a2e4ae7c4c9d9cf64646217"))
 
 (comment
- (on-comment "okay\n\n/issue lock" :number 136)
- (on-comment "okay\n\n/issue lock spam" :number 136)
- (on-comment "okay\n\n/issue unlock" :number 136))
+  (on-comment "okay\n\n/issue lock" :number 136)
+  (on-comment "okay\n\n/issue lock spam" :number 136)
+  (on-comment "okay\n\n/issue unlock" :number 136))
