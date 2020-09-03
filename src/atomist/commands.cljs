@@ -21,15 +21,15 @@
   (let [installation-token (:token request)]
     ((-> (fn [{:keys [token person]}]
            (go
-            (if person
-              (log/info "using user token")
-              (do
-                (<! (consider-authorizing-your-user request))
-                (log/info "using installation token")))
-            (if (and token person)
-              (<! (h request {:person person
-                              :token token}))
-              (<! (h request {:token installation-token})))))
+             (if person
+               (log/info "using user token")
+               (do
+                 (<! (consider-authorizing-your-user request))
+                 (log/info "using installation token")))
+             (if (and token person)
+               (<! (h request {:person person
+                               :token token}))
+               (<! (h request {:token installation-token})))))
          (api/extract-github-user-token-by-github-login))
      (assoc request :login login))))
 
