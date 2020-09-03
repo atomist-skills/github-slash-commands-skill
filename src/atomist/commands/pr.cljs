@@ -40,14 +40,20 @@
             (and branch base title)
             (<! (try-user-then-installation request login
                                             (fn [_ {:keys [token]}]
-                                              (github/post-pr
-                                               {:token token :owner (:owner repo) :repo (:name repo)}
-                                               (merge {:title title
-                                                       :body "submitted from git-chatops-skill"
-                                                       :head branch
-                                                       :base base}
-                                                      (if draft {:draft true}))
-                                               labels))))
+                                              (go
+                                                (let [response (<! (github/post-pr
+                                                                    {:token token :owner (:owner repo) :repo (:name repo)}
+                                                                    (merge {:title title
+                                                                            :body "submitted from git-chatops-skill"
+                                                                            :head branch
+                                                                            :base base}
+                                                                           (if draft {:draft true}))
+                                                                    labels))]
+                                                  (cond (= "Bad credentials" (-> response :body :message))
+                                                        (do
+                                                          (<! (commit-error request ["Bad credentials"]))
+                                                          response)
+                                                        :else response))))))
 
             ;; close a PR from a comment
             (and (some #{"close"} just-args) number)

@@ -4,22 +4,32 @@
             [atomist.api :as api]
             [atomist.cljs-log :as log]
             [goog.string :as gstring]
-            [goog.string.format]))
+            [goog.string.format]
+            [cljs.core.async :refer [<!] :refer-macros [go]]))
 
 (def command-prefixes #{"pr" "label" "cc" "issue"})
 
 (defmulti run (comp :command/command :command))
 
+(defn consider-authorizing-your-user [{{:command/keys [token repo command] sha :push/sha} :command}]
+  (github/post-commit-comment
+   {:owner (:owner repo) :repo (:name repo) :token token}
+   sha
+   (gstring/format "running %s with installation token - consider authorizing your user to maintain attribution" command)))
+
 (defn try-user-then-installation [request login h]
   (let [installation-token (:token request)]
     ((-> (fn [{:keys [token person]}]
-           (if person
-             (log/info "using user token")
-             (log/info "using installation token"))
-           (if (and token person)
-             (h request {:person person
-                         :token token})
-             (h request {:token installation-token})))
+           (go
+            (if person
+              (log/info "using user token")
+              (do
+                (<! (consider-authorizing-your-user request))
+                (log/info "using installation token")))
+            (if (and token person)
+              (<! (h request {:person person
+                              :token token}))
+              (<! (h request {:token installation-token})))))
          (api/extract-github-user-token-by-github-login))
      (assoc request :login login))))
 
