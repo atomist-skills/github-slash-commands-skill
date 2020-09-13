@@ -14,11 +14,11 @@
    :maxAllowed 1}],
  :displayName "GitHub Slash Commands",
  :name "github-slash-commands-skill",
+ :triggers ["OnAnyPush" "OnComment"],
+ :maxConfigurations 1,
  :author "Atomist",
  :categories ["CODE_REVIEW" "CHAT"],
  :iconUrl "https://images.atomist.com/skills/chatbot.png",
- :maxConfigurations 1
- :triggers ["OnAnyPush" "OnComment"]
  :runtime
  {:memory 512,
   :timeout 60,
