@@ -93,7 +93,7 @@
 
 (s/def :command/command command-prefixes)
 (defmulti command-type :command/command)
-(defmethod command-type "pr" [_] (s/merge :command/base (s/keys :req [:push/branch] :opt [:label/number :push/sha])))
+(defmethod command-type "pr" [_] (s/merge :command/base (s/keys :opt [:push/branch :label/number :push/sha])))
 (defmethod command-type "label" [_] (s/merge :command/base (s/keys :req [:label/number :label/default-color])))
 (defmethod command-type "cc" [_] (s/merge :command/base (s/keys :opt [:label/number :push/branch :push/sha])))
 (defmethod command-type "issue" [_] :command/base)
