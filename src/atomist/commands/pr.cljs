@@ -1,7 +1,7 @@
 (ns atomist.commands.pr
   (:require [atomist.shell :as shell]
             [cljs.core.async :refer [<!]]
-            [atomist.commands :refer [run try-user-then-installation commit-error]]
+            [atomist.commands :as commands :refer [run try-user-then-installation commit-error]]
             [atomist.cljs-log :as log]
             [atomist.github :as github]
             [atomist.local-runner :as lr]
@@ -14,7 +14,7 @@
                        :push/keys [branch]
                        :label/keys [number]} :command :as request}]
   (go
-    (let [{{:keys [title base labels draft]} :options
+    (let [{{:keys [title base labels reviewers draft issue-number]} :options
            errors :errors
            just-args :arguments}
           (shell/raw-message->options {:raw_message args}
@@ -24,14 +24,9 @@
                                        [nil "--draft"]
                                        [nil "--base BASE" "base branch ref"
                                         :default "master"]
-                                       ["-l" "--label LABEL" "add labels"
-                                        :id :labels
-                                        :default []
-                                        :assoc-fn (fn [m k v] (update-in m [k] conj v))]
-                                       ["-r" "--reviewer REVIEWER" "assign reviewers"
-                                        :id :reviewers
-                                        :default []
-                                        :assoc-fn (fn [m k v] (update-in m [k] conj v))]])]
+                                       commands/label-parameter
+                                       commands/review-parameter
+                                       commands/number-parameter])]
       (if (empty? errors)
         (let [p {:token token :owner (:owner repo) :repo (:name repo)}]
           (cond
@@ -56,11 +51,11 @@
                                                         :else response))))))
 
             ;; close a PR from a comment
-            (and (some #{"close"} just-args) number)
+            (and (some #{"close"} just-args) (or number issue-number))
             (<!
              (try-user-then-installation request login
                                          (fn [_ {:keys [token]}]
-                                           (github/patch-pr-state (assoc p :token token) number "closed"))))
+                                           (github/patch-pr-state (assoc p :token token) (or number issue-number) "closed"))))
 
             ;; close a PR from a commit to it's branch
             (and (some #{"close"} just-args) branch)
@@ -70,13 +65,13 @@
                                            (github/close-pr (assoc p :token token) branch))))
 
             ;; mark a PR READY from a Comment
-            (and (some #{"ready"} just-args) number)
+            (and (some #{"ready"} just-args) (or number issue-number))
             (<!
              (try-user-then-installation request login
                                          (fn [_ {:keys [person token]}]
                                            (go
                                              (if person
-                                               (<! (github/pr-is-ready-by-number (assoc p :token token) number))
+                                               (<! (github/pr-is-ready-by-number (assoc p :token token) (or number issue-number)))
                                                (let [errors {:errors ["github authorization required for marking PRs ready for review"]}]
                                                  (log/warn "can not mark PRs ready with an installation token")
                                                  (<! (commit-error request [:user-auth-only (-> errors :errors first)]))

@@ -9,6 +9,24 @@
 
 (def command-prefixes #{"pr" "label" "cc" "issue"})
 
+(def label-parameter ["-l" "--label LABEL" "add labels"
+                      :id :labels
+                      :default []
+                      :assoc-fn (fn [m k v] (update-in m [k] conj v))])
+
+(def reviewer-parameter ["-r" "--reviewer REVIEWER" "assign reviewers"
+                         :id :reviewers
+                         :default []
+                         :assoc-fn (fn [m k v] (update-in m [k] conj v))])
+
+(def number-parameter ["-n" "--number NUMBER" "Issue/PR number"
+                       :id :issue-number])
+
+(def assignee-parameter [nil "--assignee ASSIGNEE"
+                         :id :assignees
+                         :default []
+                         :assoc-fn (fn [m k v] (update-in m [k] conj v))])
+
 (defmulti run (comp :command/command :command))
 
 (defn authorization-link [{:keys [team-id resource-provider-id redirect-uri state]}]

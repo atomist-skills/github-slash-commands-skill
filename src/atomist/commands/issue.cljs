@@ -3,7 +3,7 @@
             [cljs.core.async :refer [<!]]
             [atomist.github :as github]
             [goog.string.format]
-            [atomist.commands :refer [run]]
+            [atomist.commands :as commands :refer [run]]
             [goog.string :as gstring]
             [goog.string.format]
             [clojure.string :as s]
@@ -42,16 +42,10 @@
   (go
     (let [{options :options errors :errors just-args :arguments}
           (shell/raw-message->options {:raw_message args}
-                                      [["-l" "--label LABEL"
-                                        :id :labels
-                                        :default []
-                                        :assoc-fn (fn [m k v] (update-in m [k] conj v))]
-                                       [nil "--title TITLE"]
-                                       ["-n" "--number NUMBER"]
-                                       [nil "--assignee ASSIGNEE"
-                                        :id :assignees
-                                        :default []
-                                        :assoc-fn (fn [m k v] (update-in m [k] conj v))]
+                                      [commands/label-parameter
+                                       commands/assignee-parameter
+                                       commands/number-parameter
+                                       [nil "--title TITLE" "Issue Title"]
                                        [nil "--project PROJECT"]])]
       (if (empty? errors)
         (cond
@@ -66,6 +60,7 @@
           (and (some #{"close"} just-args) (:number options)) (<! (close-issue request (:number options)))
           ;; close an issue when you're making a comment on that issue, and the number has been extracted from the event
           (and (some #{"close"} just-args) number) (<! (close-issue request number))
+          ;; lock an issue when you're making a commen on that issue
           (and (some #{"lock"} just-args) number) (if-let [reason (has-reason just-args)]
                                                     (do
                                                       (log/info "lock " reason)
