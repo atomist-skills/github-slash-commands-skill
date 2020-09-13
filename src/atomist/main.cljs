@@ -60,11 +60,13 @@
                                         :command/login login
                                         :label/default-color (or default-color "f29513")}
                                        (when number
-                                         {:label/number number})
+                                         {:label/number number
+                                          :command/source :command.source/issue-comment})
                                        (when branch
                                          {:push/branch branch})
                                        (when sha
-                                         {:push/sha sha})))))))))
+                                         {:push/sha sha
+                                          :command/source :command.source/commit-message})))))))))
 
 (defn atomist-commands [s]
   (re-seq (re-pattern (gstring/format "(?m)/(%s) (.*)?"

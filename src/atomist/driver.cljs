@@ -18,9 +18,9 @@
 
 (comment
  ;; wrong
-  (on-push "something\n\n/pr --draft\n" :sha "803c44e10439f6fb8a2e4ae7c4c9d9cf64646217")
+  (on-push "something\n\n/pr --draft\n" :sha "71e4749ee79cfd900882c1ca62f0257ff1715f83")
  ;; right
-  (on-push "something\n\n/pr --title \"my pr\" --base master --draft" :branch "slimtest")
+  (on-push "something\n\n/pr --title \"my pr\" --base master --draft" :branch "slimtest1" :sha "71e4749ee79cfd900882c1ca62f0257ff1715f83")
  ;; mark as ready
   (on-push "something\n\n/pr ready\n" :branch "slimtest")
  ;; close

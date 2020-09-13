@@ -51,7 +51,7 @@
                                                                     labels))]
                                                   (cond (= "Bad credentials" (-> response :body :message))
                                                         (do
-                                                          (<! (commit-error request ["Bad credentials"]))
+                                                          (<! (commit-error request [:bad-creds "Bad credentials"]))
                                                           response)
                                                         :else response))))))
 
@@ -79,7 +79,7 @@
                                                (<! (github/pr-is-ready-by-number (assoc p :token token) number))
                                                (let [errors {:errors ["github authorization required for marking PRs ready for review"]}]
                                                  (log/warn "can not mark PRs ready with an installation token")
-                                                 (<! (commit-error request (:errors errors)))
+                                                 (<! (commit-error request [:user-auth-only (-> errors :errors first)]))
                                                  errors))))))
 
             ;; mark a PR READY from a Commit to it's head branch
@@ -94,7 +94,7 @@
                     (<! (github/pr-is-ready-by-branch (assoc p :token token) branch))
                     (let [errors {:errors ["github authorization required for marking PRs ready for review"]}]
                       (log/warn "can not mark PRs ready with an installation token")
-                      (<! (commit-error request (:errors errors)))
+                      (<! (commit-error request [:user-auth-only (-> errors :errors first)]))
                       errors))))))
 
             ;(and (some #{"draft"} just-args) number)
@@ -106,7 +106,7 @@
 
             :else
             (let [errors {:errors [(gstring/format "bad arguments to /pr")]}]
-              (<! (commit-error request (:errors errors)))
+              (<! (commit-error request [:client-error (-> errors :errors first)]))
               errors)))
 
         {:errors errors}))))

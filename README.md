@@ -155,20 +155,22 @@ sense in the context of an issue comment are listed here:
     ```
     /pr ready
     ```
-    
+
 3.  **Lock or unlock an Issue**
 
     Mark the current issue as locked
-    
+
     ```
     /issue lock [off topic|too heated|resolved|spam]
     ```
-    
+
     or unlock it
-    
+
     ```
     /issue unlock
     ```
+
+    ![lock](docs/images/lock.png)
 
 4.  **Notify a Slack channel or user**
 
