@@ -182,8 +182,8 @@ sense in the context of an issue comment are listed here:
     /cc @<slack-user>
     ```
 
-To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/git-chatops-skill/issues).
-See the [code](https://github.com/atomist-skills/git-chatops-skill) for the skill.
+To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/github-slash-commands-skill/issues).
+See the [code](https://github.com/atomist-skills/github-slash-commands-skill) for the skill.
 
 <!---atomist-skill-readme:end--->
 
