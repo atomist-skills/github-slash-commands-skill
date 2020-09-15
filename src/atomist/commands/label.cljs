@@ -16,7 +16,7 @@
       (if (= "Not Found" (:message response))
         (<! (github/add-label request {:name label
                                        :color default-color
-                                       :description (gstring/format "added by %s/%s" 
+                                       :description (gstring/format "added by %s/%s"
                                                                     (-> request :skill :namespace)
                                                                     (-> request :skill :name))}))
         response))))
