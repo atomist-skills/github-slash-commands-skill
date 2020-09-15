@@ -39,7 +39,7 @@
                                                 (let [response (<! (github/post-pr
                                                                     {:token token :owner (:owner repo) :repo (:name repo)}
                                                                     (merge {:title title
-                                                                            :body "submitted from git-chatops-skill"
+                                                                            :body ""
                                                                             :head branch
                                                                             :base base}
                                                                            (if draft {:draft true}))
