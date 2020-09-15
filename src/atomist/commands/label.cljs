@@ -16,7 +16,9 @@
       (if (= "Not Found" (:message response))
         (<! (github/add-label request {:name label
                                        :color default-color
-                                       :description "added by atomist/git-chatops-skill"}))
+                                       :description (gstring/format "added by %s/%s" 
+                                                                    (-> request :skill :namespace)
+                                                                    (-> request :skill :name))}))
         response))))
 
 ;; /label --rm label1,label2
