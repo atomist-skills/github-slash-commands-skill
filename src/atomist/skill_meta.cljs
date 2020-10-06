@@ -3,6 +3,6 @@
 
 (def module-name "github-slash-commands-skill")
 (def path ".")
-(def version "0.1.39")
-(def tag "0.1.39")
-(def generated-at "2020-09-03T23:58:55Z")
+(def version "0.1.40")
+(def tag "0.1.40")
+(def generated-at "2020-10-06T14:38:12Z")
