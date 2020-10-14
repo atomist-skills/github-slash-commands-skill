@@ -39,7 +39,7 @@
                                        [nil "--base BASE" "base branch ref"
                                         :default "master"]
                                        commands/label-parameter
-                                       commands/review-parameter
+                                       commands/reviewer-parameter
                                        commands/number-parameter])]
       (if (empty? errors)
         (let [p {:token token :owner (:owner repo) :repo (:name repo)}]
