@@ -1,16 +1,17 @@
 # How to configure
 
-To make the slash commands available in a repository, it must be enabled below. We recommend enabling this skill for
-all repositories.
+To make the slash commands available in a repository, it must be enabled below.
+We recommend enabling this skill for all repositories.
 
 1. **Determine repository scope**
 
     ![Repository filter](docs/images/repo-filter.png)
 
-    By default, this skill will be enabled for Issues, and Commits on all repositories that you have connected.
+    By default, this skill will be enabled for Issues, and Commits on all
+    repositories that you have connected.
 
-    To restrict the organizations or repositories on which the skill will run, restrict the skill to a subset
-    of your repositories.
+    To restrict the organizations or repositories on which the skill will run,
+    restrict the skill to a subset of your repositories.
 
 ## How to use
 
@@ -18,19 +19,21 @@ all repositories.
 
 1.  **Create a pull request from a commit message**
 
-    When you push a commit to a branch, and you're ready to raise a pull request, add the following command any
-    where in your commit message.
+    When you push a commit to a branch, and you're ready to raise a pull
+    request, add the following command any where in your commit message.
 
     ```
     /pr --title 'any title surrounded by quotes' --base target-branch-ref --draft
     ```
 
-    This is useful when you are committing a new branch. You can push and create the pull request in one step.
-    Note that this requests the pull request creation in draft mode so it is not yet ready to be reviewed.
+    This is useful when you are committing a new branch. You can push and create
+    the pull request in one step. Note that this requests the pull request
+    creation in draft mode so it is not yet ready to be reviewed.
 
 2.  **Notify a User or Channel in Slack**
 
-    Highlight this Commit for a User or a Slack channel, by mentioning them in the body of the commit message.  
+    Highlight this Commit for a User or a Slack channel, by mentioning them in
+    the body of the commit message.  
     This command requires that the Slack integration is enabled for the team.
 
     ```
@@ -54,7 +57,8 @@ all repositories.
 
 4.  **Close a Pull Request**
 
-    When committing to a branch with an open pull request, you can close any open pull requests associated with this branch:
+    When committing to a branch with an open pull request, you can close any
+    open pull requests associated with this branch:
 
     ```
     /pr close
@@ -66,9 +70,11 @@ all repositories.
     /pr close --base master
     ```
 
-    This can be useful when you've realized that the branch needs more work and you'd like to retract the pull request.  
-    We are planning on adding a `/pr draft` to move the pull request back to draft mode. Unfortunately, github does not
-    seem to provide api access to this feature yet.
+    This can be useful when you've realized that the branch needs more work and
+    you'd like to retract the pull request.  
+    We are planning on adding a `/pr draft` to move the pull request back to
+    draft mode. Unfortunately, github does not seem to provide api access to
+    this feature yet.
 
 5.  **Mark a draft Pull Request as Ready for review**
 
@@ -78,11 +84,12 @@ all repositories.
     /pr ready
     ```
 
-    This is great complement to the ability to create pull requests in draft mode. Create draft pull requests early,
-    and then mark them ready to review later.
+    This is great complement to the ability to create pull requests in draft
+    mode. Create draft pull requests early, and then mark them ready to review
+    later.
 
-All of the above command can be combined. So a Commit message could create a pull request, and notify
-Slack users in the same commit message.
+All of the above command can be combined. So a Commit message could create a
+pull request, and notify Slack users in the same commit message.
 
 ```
 Adding feature X
@@ -94,12 +101,14 @@ This is a backwards compatible change to the segments api
 
 ### Add commands to Issue or Pull Request Comments
 
-We can also add commands to the comments of any issue, or pull request. The commands that make the most
-sense in the context of an issue comment are listed here:
+We can also add commands to the comments of any issue, or pull request. The
+commands that make the most sense in the context of an issue comment are listed
+here:
 
 1.  **Add or remove labels**
 
-    When commenting on an issue, or on a pull request, you can add labels by adding commands to the comment:
+    When commenting on an issue, or on a pull request, you can add labels by
+    adding commands to the comment:
 
     ```
     /label label1,label2
@@ -137,13 +146,15 @@ sense in the context of an issue comment are listed here:
 
 4.  **Notify a Slack channel or user**
 
-    Similar to above, you can highlight Issues for users or channels. This only works if our Slack integration
-    has been enabled.
+    Similar to above, you can highlight Issues for users or channels. This only
+    works if our Slack integration has been enabled.
 
     ```
     /cc #<slack-channel>
     /cc @<slack-user>
     ```
 
-To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/github-slash-commands-skill/issues).
-See the [code](https://github.com/atomist-skills/github-slash-commands-skill) for the skill.
+To create feature requests or bug reports, create an
+[issue in the repository for this skill](https://github.com/atomist-skills/github-slash-commands-skill/issues).
+See the [code](https://github.com/atomist-skills/github-slash-commands-skill)
+for the skill.
