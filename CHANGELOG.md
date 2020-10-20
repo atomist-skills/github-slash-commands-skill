@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/github-slash-commands-skill/compare/0.2.0...HEAD)
 
+### Changed
+
+-   Use repo `defaultBranch` as default for --base in /pr command. [3dab24a](https://github.com/atomist-skills/github-slash-commands-skill/commit/3dab24a90cab6d05bcbaba06c2bd71ee2ddbb523)
+
 ## [0.2.0](https://github.com/atomist-skills/github-slash-commands-skill/tree/0.2.0) - 2020-10-16
 
 ### Changed
