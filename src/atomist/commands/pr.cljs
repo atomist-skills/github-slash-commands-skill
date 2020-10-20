@@ -37,7 +37,7 @@
                                        [nil "--request-changes" "request changes"]
                                        [nil "--draft"]
                                        [nil "--base BASE" "base branch ref"
-                                        :default "master"]
+                                        :default (or (:defaultBranch repo) "master")]
                                        commands/label-parameter
                                        commands/reviewer-parameter
                                        commands/number-parameter])]

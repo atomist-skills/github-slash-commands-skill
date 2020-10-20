@@ -115,7 +115,8 @@
 (s/def :command/args string?)
 (s/def :repo/owner string?)
 (s/def :repo/name string?)
-(s/def :command/repo (s/keys :req-un [:repo/owner :repo/name]))
+(s/def :repo/defaultBranch string?)
+(s/def :command/repo (s/keys :req-un [:repo/owner :repo/name :repo/defaultBranch]))
 (s/def :command/token string?)
 ;; the message refers to either the Commit message or the Pr/Issue Comment
 (s/def :command/message string?)
