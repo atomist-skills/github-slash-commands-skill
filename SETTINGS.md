@@ -2,18 +2,16 @@
 
 Connect and configure these integrations:
 
-1.  [**GitHub**][github] _(required)_
-2.  [**Slack**][slack] or [**Microsoft Teams**][msteams] _(optional)_
-
-[github]: https://go.atomist.com/catalog/integration/github "GitHub Integration"
-[slack]: https://go.atomist.com/catalog/integration/slack "Slack Integration"
-[msteams]:
-    https://go.atomist.com/catalog/integration/microsoft-teams
-    "Microsoft Teams Integration"
+1.  [**GitHub**](https://go.atomist.com/catalog/integration/github "GitHub Integration")
+    _(required)_
+1.  [**Slack**](https://go.atomist.com/catalog/integration/slack "Slack Integration")
+    or
+    [**Microsoft Teams**](https://go.atomist.com/catalog/integration/microsoft-teams "Microsoft Teams Integration")
+    _(optional)_
 
 ## How to configure
 
-1. **Which repositories**
+1. **Determine repository scope**
 
     ![Repository filter](docs/images/repo-filter.png)
 
