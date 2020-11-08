@@ -31,17 +31,25 @@ the repository's default branch on your behalf. Note that this requests the pull
 request creation in draft mode, essentially marking it as not yet ready to be
 reviewed.
 
+In the example above, we did not put the `/pr` command on the first line of the
+commit message. This means that it will not show up in the "short" format of the
+commit log. Users may chooto remove these command lines during squash, or
+rebasing, the branch commits.
+
 ### Use commit message to create a pull request against specific branch
 
 When you push a commit to a branch, and you're ready to raise a pull request,
 add the following command to any commit message on the branch.
 
 ```
-/pr --title 'any title surrounded by quotes' --base target-branch-ref
+/pr --title 'any title surrounded by quotes' --base target-branch-ref --label auto-merge-method:squash
 ```
 
 This is useful when you are committing a new branch. You can push and create the
-pull request in one step.
+pull request in one step. The `--label` flag is also optional. The above label
+tells another one of our skills,
+[Auto-Merge Pull Request](https://go.atomist.com/catalog/skills/atomist/github-auto-merge-skill),
+to squash commits before merging.
 
 ### Notify a user or channel in chat
 
