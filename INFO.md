@@ -33,7 +33,7 @@ reviewed.
 
 In the example above, we did not put the `/pr` command on the first line of the
 commit message. This means that it will not show up in the "short" format of the
-commit log. Users may choose remove these command lines during squash, or
+commit log. Users may choose to remove these command lines during squash, or
 rebasing, the branch commits.
 
 ### Use commit message to create a pull request against specific branch
