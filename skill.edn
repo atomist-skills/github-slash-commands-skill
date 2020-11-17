@@ -32,7 +32,7 @@
  :maxConfigurations 1,
  :author "Atomist",
  :categories ["REPO_MANAGEMENT"],
- :iconUrl "https://images.atomist.com/skills/chatbot.png",
+ :iconUrl "https://raw.githubusercontent.com/atomist-skills/github-slash-commands-skill/main/docs/images/icon.svg",
  :runtime
  {:memory 512,
   :timeout 60,
