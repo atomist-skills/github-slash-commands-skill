@@ -32,7 +32,7 @@
  :maxConfigurations 1,
  :author "Atomist",
  :categories ["REPO_MANAGEMENT"],
- :iconUrl "https://raw.githubusercontent.com/atomist-skills/github-slash-commands-skill/main/docs/images/icon.svg",
+ :iconUrl "https://raw.githubusercontent.com/atomist-skills/github-slash-commands-skill/master/docs/images/icon.svg",
  :runtime
  {:memory 512,
   :timeout 60,
